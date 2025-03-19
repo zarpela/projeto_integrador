@@ -16,7 +16,6 @@ banco = conexao.connect(
     )
 
 cursor = banco.cursor()
-#cursor.execute("create table cadastro(id integer auto_increment primary key not null unique, consumo float not null, nr float not null,energia float not null,tipotransporte varchar(50) not null)")
 def menu():
     print("="*30)
     print("- 1 -  Cadastro")
@@ -53,13 +52,13 @@ def cadastro():
     nr = float(input("Não-recicláveis (KG): "))
     energia = float(input("Energia elétrica (kWh): "))
     trans = input("Tipo de transporte: ")
-    if(int(input("Deseja cadastrar?(0-Não, 1-Sim"))==1):
-        item = [id, consumo, nr, energia, trans]
+
+    if int(input("Deseja cadastrar?(0-Não, 1-Sim"))==1 :
+
         valores = str(consumo) + "," + str(nr) + "," +str(energia)+ ", '" +str(trans)+"'"
-        print(valores)
+
         sql = "INSERT INTO cadastro(consumo, nr, energia, trans) values("+valores+");"
         cursor.execute(sql)
-        print(cursor.fetchall())
     menu()
         
     
@@ -100,10 +99,11 @@ def graficos():
 def commitar():
     resp = bool(int(input("Quer commitar as mudanças? (0-Não, 1-Sim): ")))
     if(resp):
-        cursor.commit()
+        banco.commit()
         banco.close()
         print("Obrigado por usar o sistema!")
     else:
         menu()
-    
-menu()
+
+if __name__ == '__main__':
+    menu()
