@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from tkinter import messagebox
+import tkinter as tk
 from PIL import Image
 
 #Instalar Pillow, customtkinter e tkinter
@@ -35,96 +35,113 @@ def mudar_aba(aba):
     
     #-----Aba Adicionar Registros-----
     if aba == "Adicionar registros":
+        
         texto_addRegistros = ctk.CTkLabel(frame1, 
                      text="Adicionar Registros", 
-                     text_color="black", 
+                     text_color="black",
                      font=("Arial", 18))
         texto_addRegistros.place(x=140, y=30)
         
         #-----Texto e entrada do campo agua-----
         texto_consumoAgua = ctk.CTkLabel(frame1, 
                      text="Consumo de água (L):", 
-                     text_color="black")
-        texto_consumoAgua.place(x=50, y=80)
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_consumoAgua.place(x=110, y=75)
         
         entrada_agua = ctk.CTkEntry(frame1, 
                                     width=200)
-        entrada_agua.place(x=50, y=100)
+        entrada_agua.place(x=110, y=100)
         
         #-----Texto e entrada da geração de resíduos-----
         texto_geracaoResiduos = ctk.CTkLabel(frame1,
                      text="Não recicláveis (kg):",
-                     text_color="black")
-        texto_geracaoResiduos.place(x=50, y=130)
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_geracaoResiduos.place(x=110, y=135)
         
         entrada_geracaoResiduos= ctk.CTkEntry(frame1, 
                                          width=200)
-        entrada_geracaoResiduos.place(x=50, y=150)
+        entrada_geracaoResiduos.place(x=110, y=160)
         
         #-----Texto e entrada da energia gasta-----
         texto_energiaGasta = ctk.CTkLabel(frame1, 
-                     text="Energia elétrica (kWh):", 
-                     text_color="black")
-        texto_energiaGasta.place(x=50, y=180)
+                     text="Energia elétrica (KWh):", 
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_energiaGasta.place(x=110, y=195)
         
         entrada_energiaGasta = ctk.CTkEntry(frame1, 
                                      width=200)
-        entrada_energiaGasta.place(x=50, y=200)
+        entrada_energiaGasta.place(x=110, y=220)
         
         #-----Texto e entrada do tipo de transporte-----
         texto_tipoTransporte = ctk.CTkLabel(frame1, 
-                     text="Tipo de transporte:",
-                     text_color="black")
-        texto_tipoTransporte.place(x=50, y=230)
+                     text="Tipo de transporte utilizado:",
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_tipoTransporte.place(x=110, y=255)
         
-        entrada_tipoTransporte = ctk.CTkEntry(frame1, 
+        transportes = ["Transporte Público", "Bicicleta", "Caminhada", "Carona", "Carro Particular", "Moto Particular"]
+        entrada_tipoTransporte = ctk.CTkComboBox(frame1,
+                                        values=transportes, 
+                                        font=("Arial", 12),
                                         width=200)
-        entrada_tipoTransporte.place(x=50, y=250)
+        entrada_tipoTransporte.place(x=110, y=280)
         
         #-----Botão adicionar registros-----
         botao_addResgistros = ctk.CTkButton(frame1, 
                       text="Cadastrar", 
                       fg_color="#474444", 
                       corner_radius=50,
-                      command=lambda: messagebox.showinfo("Cadastro", "Dados cadastrados com sucesso!"))
-        botao_addResgistros.place(x=140, y=310)
+                      width= 145,
+                      height= 35,
+                      command=lambda: tk.messagebox.showinfo("Cadastro", "Dados cadastrados com sucesso!"))
+        botao_addResgistros.place(x=140, y=330)
     
-    #-----Aba "Registros"-----
-    elif aba == "Registros":
+    #-----Aba "Consultar"-----
+    elif aba == "Consultar":
+        
+        texto_addRegistros = ctk.CTkLabel(frame1, 
+                     text="Consultar Registros", 
+                     text_color="black",
+                     font=("Arial", 18))
+        texto_addRegistros.place(x=140, y=30)
+        
         texto_consultarID = ctk.CTkLabel(frame1, 
                      text="Consultar por ID:", 
                      text_color="black")
-        texto_consultarID.place(x=50, y=80)
+        texto_consultarID.place(x=110, y=75)
         
         entrada_id = ctk.CTkEntry(frame1, width=200)
-        entrada_id.place(x=50, y=100)
+        entrada_id.place(x=110, y=100)
         
         botao_consultar = ctk.CTkButton(frame1, 
                       text="Consultar", 
                       fg_color="#474444", 
-                      command=lambda: messagebox.showinfo("Consulta", "Exibir detalhes do registro..."))
-        botao_consultar.place(x=50, y=130)
+                      command=lambda: tk.messagebox.showinfo("Consulta", "Exibir detalhes do registro..."))
+        botao_consultar.place(x=110, y=140)
         
     #-----Aba Ações-----
     elif aba == "Acoes":
     
-        minha_imagem = ctk.CTkImage(light_image=Image.open('ApresentaçãoPI\Acoes.png'),
-                                    dark_image=Image.open('ApresentaçãoPI\Acoes.png'),
+        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Acoes.png'),
+                                    dark_image=Image.open('grafico prototipo PI\Acoes.png'),
                                     size=(360,500))
         label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
         label_foto.place(x=0, y=0)
         
     #-----Aba Graficos-----
     elif aba == "Grafico":
-        minha_imagem = ctk.CTkImage(light_image=Image.open('ApresentaçãoPI\Grafico.png'),
-                                    dark_image=Image.open('ApresentaçãoPI\Grafico.png'),
+        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Grafico.png'),
+                                    dark_image=Image.open('grafico prototipo PI\Grafico.png'),
                                     size=(360,450))
         label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
         label_foto.place(x=0, y=0)
     
     elif aba == "Estatistica":
-        minha_imagem = ctk.CTkImage(light_image=Image.open('ApresentaçãoPI\Estatistica.png'),
-                                    dark_image=Image.open('ApresentaçãoPI\Estatistica.png'),
+        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Estatistica.png'),
+                                    dark_image=Image.open('grafico prototipo PI\Estatistica.png'),
                                     size=(360,450))
         label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
         label_foto.place(x=0, y=0)
@@ -137,18 +154,22 @@ botao_adiconarRegistro = ctk.CTkButton(janela_principal,
                                 corner_radius=50,
                                 bg_color="#cccccc",
                                 hover_color="#363434",
+                                width= 145,
+                                height= 35,
                                 command=lambda: mudar_aba("Adicionar registros"))
 botao_adiconarRegistro.place(x=460, y=60)
     
 botao_registros = ctk.CTkButton(janela_principal,
-                                text="Registros",
+                                text="Consultar Registros",
                                 text_color="white",
                                 fg_color="#686564",
                                 corner_radius=50,
                                 bg_color="#cccccc",
                                 hover_color="#363434",
-                                command=lambda: mudar_aba("Registros"))
-botao_registros.place(x=460, y=120)
+                                width= 145,
+                                height= 35,
+                                command=lambda: mudar_aba("Consultar"))
+botao_registros.place(x=460, y=125)
     
 botao_acoes = ctk.CTkButton(janela_principal,
                                 text="Ações",
@@ -157,8 +178,10 @@ botao_acoes = ctk.CTkButton(janela_principal,
                                 corner_radius=50,
                                 bg_color="#cccccc",
                                 hover_color="#363434",
+                                width= 145,
+                                height= 35,
                                 command=lambda: mudar_aba("Acoes"))
-botao_acoes.place(x=460, y=180)
+botao_acoes.place(x=460, y=190)
     
 botao_graficos = ctk.CTkButton(janela_principal,
                                 text="Gráfico",
@@ -167,8 +190,10 @@ botao_graficos = ctk.CTkButton(janela_principal,
                                 corner_radius=50,
                                 bg_color="#cccccc",
                                 hover_color="#363434",
+                                width= 145,
+                                height= 35,
                                 command=lambda: mudar_aba("Grafico"))
-botao_graficos.place(x=460, y=240)
+botao_graficos.place(x=460, y=255)
     
 botao_estatistica = ctk.CTkButton(janela_principal,
                                 text="Estatística",
@@ -177,14 +202,10 @@ botao_estatistica = ctk.CTkButton(janela_principal,
                                 corner_radius=50,
                                 bg_color="#cccccc",
                                 hover_color="#363434",
+                                width= 145,
+                                height= 35,
                                 command=lambda: mudar_aba("Estatistica"))
-botao_estatistica.place(x=460, y=300)
-
-titulo_addRegistro = ctk.CTkLabel(frame1,
-                                  text='Sistema Sustentabilidade',
-                                  text_color="black",
-                                  font=("Arial", 23))
-titulo_addRegistro.place(x=100, y=altura/20)
+botao_estatistica.place(x=460, y=320)
 
 mudar_aba("Adicionar registros")
 
