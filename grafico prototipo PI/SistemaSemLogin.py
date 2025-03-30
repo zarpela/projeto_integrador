@@ -1,7 +1,10 @@
 import customtkinter as ctk
 import tkinter as tk
+from tkinter import ttk
 import json
 from PIL import Image
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 #Instalar Pillow, customtkinter e tkinter
 
@@ -36,12 +39,12 @@ def mudar_aba(aba):
     
     #-----Aba Adicionar Registros-----
     if aba == "Adicionar registros":
-        
+
         texto_addRegistros = ctk.CTkLabel(frame1, 
                      text="Adicionar Registros", 
                      text_color="black",
                      font=("Arial", 18))
-        texto_addRegistros.place(x=140, y=30)
+        texto_addRegistros.place(x=135, y=30)
         
         #-----Texto e entrada do campo agua-----
         texto_consumoAgua = ctk.CTkLabel(frame1, 
@@ -82,7 +85,7 @@ def mudar_aba(aba):
                                             width=200)
         entrada_energiaGasta.place(x=110, y=220)
         
-        #-----Texto e comboBox do tipo de transporte-----
+        #-----Texto e entrada do tipo de transporte-----
         texto_tipoTransporte = ctk.CTkLabel(frame1,
                                             text="Tipo de transporte utilizado:",
                                             text_color="black",
@@ -106,31 +109,58 @@ def mudar_aba(aba):
                                             width= 145,
                                             height= 35,
                                             command=lambda: tk.messagebox.showinfo("Cadastro", "Dados cadastrados com sucesso!"))
-        botao_addResgistros.place(x=140, y=330)
+        botao_addResgistros.place(x=135, y=330)
     
     
     #-----Aba "Consultar"-----
     elif aba == "Consultar":
         
+        # Função para carregar os dados do JSON
+        def carregar_dados():
+            try:
+                with open("grafico prototipo PI/dados.json", encoding='utf-8') as file:
+                    dados = json.load(file)
+                    for item in tabela.get_children():
+                        tabela.delete(item)
+                    for item in dados:
+                        tabela.insert("", "end", values=(
+                            item.get("Id", ""),
+                            item.get("Consumo de Agua", ""),
+                            item.get("Nao Reciclaveis", ""),
+                            item.get("Energia Eletrica", ""),
+                            item.get("Tipo Transporte", "")
+                        ))
+            except Exception as e:
+                tk.messagebox.showerror("Erro", f"Erro ao carregar dados: {e}")
+    
+                
         #Função pegar valor, ler BD (atualmente .json) e depois retornar consulta
         def Consulta(entradaId):
             try: 
                 entrada_idInt = int(entrada_id.get())
                 with open("grafico prototipo PI\dados.json", encoding='utf-8') as meu_json:
                     dados = json.load(meu_json)
+                    for item in tabela.get_children():
+                        tabela.delete(item)
                     for i in dados:
                         if i['Id'] == entrada_idInt:
-                            print(i['Id'], i['Consumo de Agua'], i['Nao Reciclaveis'], i['Energia Eletrica'], i['Tipo Transporte'])       
+                            tabela.insert("", "end", values=(
+                            i.get("Id", ""),
+                            i.get("Consumo de Agua", ""),
+                            i.get("Nao Reciclaveis", ""),
+                            i.get("Energia Eletrica", ""),
+                            i.get("Tipo Transporte", "")
+                        ))
+                        
             except ValueError:
                 tk.messagebox.showinfo("Erro", "Por favor inserir um número")
-        
         
         #-----Texto adicionar registro-----
         texto_addRegistros = ctk.CTkLabel(frame1, 
                      text="Consultar Registros", 
                      text_color="black",
                      font=("Arial", 18))
-        texto_addRegistros.place(x=140, y=30)
+        texto_addRegistros.place(x=135, y=30)
         
         
         #-----Texto e entrada para consultar ID-----
@@ -153,37 +183,186 @@ def mudar_aba(aba):
                       width= 145,
                       height= 35,
                       command=lambda: Consulta(entrada_id))
-        botao_consultar.place(x=140, y=110)
+        botao_consultar.place(x=135, y=115)
+
+        #-----Criar um frame interno para a tabela-----
+        tabela_frame = ctk.CTkFrame(frame1,
+                                    fg_color="white",
+                                    width=380,
+                                    height=250)
+        tabela_frame.place(x=10, y=160)
         
+        #-----Botão consultar ID-----
+        botao_limpar = ctk.CTkButton(frame1, text="Limpar Tabela",
+                                    text_color="white",
+                                    fg_color="#474444", 
+                                    corner_radius=50,
+                                    width= 145,
+                                    height= 35,
+                                    command=carregar_dados)
+        botao_limpar.place(x= 135, y= 350)
+
+        #-----Criar barras de rolagem-----
+        scroll_y = tk.Scrollbar(tabela_frame, orient="vertical")
+        scroll_x = tk.Scrollbar(tabela_frame, orient="horizontal")
+
+        #-----Criar tabela-----
+        colunas = ("Id", "Água (L)", "Resíduos", "Energia", "Transporte")
+        tabela = ttk.Treeview (tabela_frame,
+                               columns=colunas,
+                               show="headings",
+                               height= 7,
+                               yscrollcommand=scroll_y.set,
+                               xscrollcommand=scroll_x.set)
+
+        #-----Adicionar barras de rolagem-----
+        scroll_y.config(command=tabela.yview)
+        scroll_x.config(command=tabela.xview)
+
+        scroll_y.pack(side="right", fill="y")
+        scroll_x.pack(side="bottom", fill="x")
+
+        tabela.pack(expand=True, fill="both")
+
+        #-----Definir largura das colunas (mais compactas)-----
+        tabela.column("Id", width=30, anchor="center")
+        tabela.column("Água (L)", width=80, anchor="center")
+        tabela.column("Resíduos", width=75, anchor="center")
+        tabela.column("Energia", width=75, anchor="center")
+        tabela.column("Transporte", width=110, anchor="center")
+
+        #-----Definir cabeçalhos das colunas-----
+        for col in colunas:
+            tabela.heading(col, text=col)
+
+        #-----Carregar os dados ao abrir a aba-----
+        carregar_dados()
         
     #-----Aba Ações-----
     elif aba == "Acoes":
+            #def Editar():
+            #def Excluir():
+            
+        # Função para carregar os dados do JSON
+        def carregar_dados():
+            try:
+                with open("grafico prototipo PI/dados.json", encoding='utf-8') as file:
+                    dados = json.load(file)
+                    for item in tabela.get_children():
+                        tabela.delete(item)
+                    for item in dados:
+                        tabela.insert("", "end", values=(
+                            item.get("Id", ""),
+                            item.get("Consumo de Agua", ""),
+                            item.get("Nao Reciclaveis", ""),
+                            item.get("Energia Eletrica", ""),
+                            item.get("Tipo Transporte", "")
+                        ))
+            except Exception as e:
+                tk.messagebox.showerror("Erro", f"Erro ao carregar dados: {e}")
+        
+                # Criar um frame interno para a tabela
+        tabela_frame = ctk.CTkFrame(frame1,
+                                    fg_color="white",
+                                    width=380,
+                                    height=250)
+        tabela_frame.place(x=10, y=75)
+                
+                # Criar barras de rolagem
+        scroll_y = tk.Scrollbar(tabela_frame, orient="vertical")
+        scroll_x = tk.Scrollbar(tabela_frame, orient="horizontal")
+
+        # Criar tabela
+        colunas = ("Id", "Água (L)", "Resíduos", "Energia", "Transporte")
+        tabela = ttk.Treeview (tabela_frame,
+                               columns=colunas,
+                               show="headings",
+                               height= 12,
+                               yscrollcommand=scroll_y.set,
+                               xscrollcommand=scroll_x.set)
+
+        # Adicionar barras de rolagem
+        scroll_y.config(command=tabela.yview)
+        scroll_x.config(command=tabela.xview)
+
+        scroll_y.pack(side="right", fill="y")
+        scroll_x.pack(side="bottom", fill="x")
+
+        tabela.pack(expand=True, fill="both")
+
+        # 🔹 **Definir largura das colunas (mais compactas)**
+        tabela.column("Id", width=30, anchor="center")
+        tabela.column("Água (L)", width=80, anchor="center")
+        tabela.column("Resíduos", width=75, anchor="center")
+        tabela.column("Energia", width=75, anchor="center")
+        tabela.column("Transporte", width=110, anchor="center")
+
+        # Definir cabeçalhos das colunas
+        for col in colunas:
+            tabela.heading(col, text=col)
+
+        # Carregar os dados ao abrir a aba
+        carregar_dados()
+            
+        texto_acoes = ctk.CTkLabel(frame1, 
+                        text="Ações do Sistema", 
+                        text_color="black",
+                        font=("Arial", 18))
+        texto_acoes.place(x=135, y=30)
+        
+        #-----Botão da ação editar-----
+        botao_editar = ctk.CTkButton(frame1, 
+                        text="Editar", 
+                        fg_color="#474444", 
+                        corner_radius=50,
+                        width= 145,
+                        height= 35)
+        botao_editar.place(x=50, y=350) 
+
+        #-----Botão da ação excluir-----
+        botao_excluir = ctk.CTkButton(frame1, 
+                        text="Excluir", 
+                        fg_color="#474444", 
+                        corner_radius=50,
+                        width= 145,
+                        height= 35)
+        botao_excluir.place(x=220, y=350)
     
-        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Acoes.png'),
-                                    dark_image=Image.open('grafico prototipo PI\Acoes.png'),
-                                    size=(360,500))
-        label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
-        label_foto.place(x=0, y=0)
-        
-        
+    
     #-----Aba Graficos-----
     elif aba == "Grafico":
-        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Grafico.png'),
-                                    dark_image=Image.open('grafico prototipo PI\Grafico.png'),
-                                    size=(360,450))
-        label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
-        label_foto.place(x=0, y=0)
-    
-    
-    #-----Aba Graficos-----
-    elif aba == "Estatistica":
-        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Estatistica.png'),
-                                    dark_image=Image.open('grafico prototipo PI\Estatistica.png'),
-                                    size=(360,450))
-        label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
-        label_foto.place(x=0, y=0)
+            
+        with open("grafico prototipo PI\dados.json", encoding='utf-8') as jorge:
+            dados = json.load(jorge)
+
+        if not dados:
+            tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para exibir no gráfico.")
+            return
         
-#-----Botões do frame 2 (Menu)-----
+        texto_acoes = ctk.CTkLabel(frame1, 
+                        text="Gráfico de Sustentabilidade", 
+                        text_color="black",
+                        font=("Arial", 18))
+        texto_acoes.place(x=110, y=30)
+
+        num_registros = len(dados)
+            
+        categorias = ["Água", "Não Recicláveis", "Energia"]
+        valores = [
+            sum(dado["Consumo de Agua"] for dado in dados) / num_registros,
+            sum(dado["Nao Reciclaveis"] for dado in dados) / num_registros,
+            sum(dado["Energia Eletrica"] for dado in dados) / num_registros
+        ]
+            
+        fig, ax = plt.subplots(figsize = (4.2, 3.4))
+        ax.bar(categorias, valores, color=['blue', 'green', 'red'])
+        ax.set_ylabel("Média dos Valores")
+            
+        canvas = FigureCanvasTkAgg(fig, master=frame1)
+        canvas.draw()
+        canvas.get_tk_widget().place(x=10, y=50)
+        
+
 botao_adiconarRegistro = ctk.CTkButton(janela_principal,
                                 text="Adicionar registros",
                                 text_color="white",
