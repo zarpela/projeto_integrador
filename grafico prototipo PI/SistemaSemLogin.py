@@ -2,6 +2,8 @@ import customtkinter as ctk
 import tkinter as tk
 import json
 from PIL import Image
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 #Instalar Pillow, customtkinter e tkinter
 
@@ -168,14 +170,37 @@ def mudar_aba(aba):
         
     #-----Aba Graficos-----
     elif aba == "Grafico":
-        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Grafico.png'),
-                                    dark_image=Image.open('grafico prototipo PI\Grafico.png'),
-                                    size=(360,450))
-        label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
-        label_foto.place(x=0, y=0)
+        try:
+            with open("dados.json", encoding='utf-8') as meu_json:
+                dados = json.load(meu_json)
+
+            if not dados:
+                tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para exibir no gráfico.")
+                return
+
+            num_registros = len(dados)
+            
+            categorias = ["Água", "Não Recicláveis", "Energia"]
+            valores = [
+                sum(dado["Consumo de Agua"] for dado in dados) / num_registros,
+                sum(dado["Nao Reciclaveis"] for dado in dados) / num_registros,
+                sum(dado["Energia Eletrica"] for dado in dados) / num_registros
+            ]
+            
+            fig, ax = plt.subplots(figsize = (4, 4))
+            ax.bar(categorias, valores, color=['blue', 'green', 'red'])
+            ax.set_ylabel("Média dos Valores")
+            ax.set_title("Gráfico de Consumo e Sustentabilidade")
+            
+            canvas = FigureCanvasTkAgg(fig, master=frame1)
+            canvas.draw()
+            canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        
+        except (FileNotFoundError, json.JSONDecodeError):
+            tk.messagebox.showinfo("Erro", "Erro ao carregar os dados do gráfico.")
     
     
-    #-----Aba Graficos-----
+    #-----Aba Estatísticas-----
     elif aba == "Estatistica":
         minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Estatistica.png'),
                                     dark_image=Image.open('grafico prototipo PI\Estatistica.png'),

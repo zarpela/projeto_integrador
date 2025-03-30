@@ -1,0 +1,23 @@
+[
+    {
+        "Id": 1,
+        "Consumo de Agua": 30,
+        "Nao Reciclaveis": 30,
+        "Energia Eletrica": 50,
+        "Tipo Transporte": "Transporte Pulico"
+    },
+    {
+        "Id": 2,
+        "Consumo de Agua": 45,
+        "Nao Reciclaveis": 36,
+        "Energia Eletrica": 50,
+        "Tipo Transporte": "Transporte Pulico"
+    },
+    {
+        "Id": 3,
+        "Consumo de Agua": 39,
+        "Nao Reciclaveis": 26,
+        "Energia Eletrica": 50,
+        "Tipo Transporte": "Transporte Pulico"
+    }
+]
