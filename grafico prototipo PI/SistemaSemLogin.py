@@ -238,6 +238,7 @@ def mudar_aba(aba):
         #-----Carregar os dados ao abrir a aba-----
         carregar_dados()
         
+        
     #-----Aba Ações-----
     elif aba == "Acoes":
             #def Editar():
@@ -277,7 +278,7 @@ def mudar_aba(aba):
         tabela = ttk.Treeview (tabela_frame,
                                columns=colunas,
                                show="headings",
-                               height= 12,
+                               height= 11,
                                yscrollcommand=scroll_y.set,
                                xscrollcommand=scroll_x.set)
 
@@ -361,6 +362,15 @@ def mudar_aba(aba):
         canvas = FigureCanvasTkAgg(fig, master=frame1)
         canvas.draw()
         canvas.get_tk_widget().place(x=10, y=50)
+        
+    #-----Aba Graficos-----
+    elif aba == "Estatistica":
+
+        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Estatistica.png'),
+                                    dark_image=Image.open('grafico prototipo PI\Estatistica.png'),
+                                    size=(360,450))
+        label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
+        label_foto.place(x=0, y=0)
         
 
 botao_adiconarRegistro = ctk.CTkButton(janela_principal,
