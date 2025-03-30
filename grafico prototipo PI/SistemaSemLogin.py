@@ -48,46 +48,46 @@ def mudar_aba(aba):
                      text="Consumo de água (L):", 
                      text_color="black",
                      font=("Arial", 12))
-        texto_consumoAgua.place(x=110, y=75)
+        texto_consumoAgua.place(x=20, y=75)
         
         entrada_agua = ctk.CTkEntry(frame1, 
                                     corner_radius=50,
                                     border_color="Grey",
                                     width=200)
-        entrada_agua.place(x=110, y=100)
+        entrada_agua.place(x=20, y=100)
         
         #-----Texto e entrada da geração de resíduos-----
         texto_geracaoResiduos = ctk.CTkLabel(frame1,
                                             text="Não recicláveis (kg):",
                                             text_color="black",
                                             font=("Arial", 12))
-        texto_geracaoResiduos.place(x=110, y=135)
+        texto_geracaoResiduos.place(x=20, y=135)
         
         entrada_geracaoResiduos= ctk.CTkEntry(frame1,
                                             corner_radius=50, 
                                             border_color="Grey",
                                             width=200)
-        entrada_geracaoResiduos.place(x=110, y=160)
+        entrada_geracaoResiduos.place(x=20, y=160)
         
         #-----Texto e entrada da energia gasta-----
         texto_energiaGasta = ctk.CTkLabel(frame1, 
                                             text="Energia elétrica (KWh):", 
                                             text_color="black",
                                             font=("Arial", 12))
-        texto_energiaGasta.place(x=110, y=195)
+        texto_energiaGasta.place(x=20, y=195)
         
         entrada_energiaGasta = ctk.CTkEntry(frame1, 
                                             corner_radius=50,
                                             border_color="Grey",
                                             width=200)
-        entrada_energiaGasta.place(x=110, y=220)
+        entrada_energiaGasta.place(x=20, y=220)
         
         #-----Texto e comboBox do tipo de transporte-----
         texto_tipoTransporte = ctk.CTkLabel(frame1,
                                             text="Tipo de transporte utilizado:",
                                             text_color="black",
                                             font=("Arial", 12))
-        texto_tipoTransporte.place(x=110, y=255)
+        texto_tipoTransporte.place(x=20, y=255)
         
         transportes = ["Transporte Público", "Bicicleta", "Caminhada", "Carona", "Carro Particular", "Moto Particular"]
         entrada_tipoTransporte = ctk.CTkComboBox(frame1,
@@ -96,7 +96,39 @@ def mudar_aba(aba):
                                             justify="left",
                                             border_color="Grey",
                                             width=200)
-        entrada_tipoTransporte.place(x=110, y=280)
+        entrada_tipoTransporte.place(x=20, y=280)
+    
+        #-----Texto de ID - auto incremento-----
+        texto_ID = ctk.CTkLabel(frame1, 
+                     text="ID:", 
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_ID.place(x=250, y=75)
+        
+        entrada_ID = ctk.CTkEntry(frame1, 
+                                corner_radius=50,
+                                border_color="Grey",
+                                width=100,
+                                placeholder_text="0"
+                                )
+        entrada_ID.configure(state="readonly")
+        entrada_ID.place(x=245, y=100)
+        
+        #-----Texto de adicionar data e hora automatico-----
+        texto_Data = ctk.CTkLabel(frame1, 
+                     text="Data:", 
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_Data.place(x=250, y=135)
+        
+        entrada_Data = ctk.CTkEntry(frame1, 
+                                corner_radius=50,
+                                border_color="Grey",
+                                width=100,
+                                placeholder_text="00/00/0000"
+                                )
+        entrada_Data.configure(state="readonly")
+        entrada_Data.place(x=245, y=160)
         
         #-----Botão adicionar registros-----
         botao_addResgistros = ctk.CTkButton(frame1, 
@@ -116,13 +148,14 @@ def mudar_aba(aba):
         def Consulta(entradaId):
             try: 
                 entrada_idInt = int(entrada_id.get())
-                with open("grafico prototipo PI\dados.json", encoding='utf-8') as meu_json:
+                #Entrada_DataStr = str(Entrada_Data.get()) continuar data
+                with open("D:\PUC\PI\projeto_integrador\grafico prototipo PI\dados.json", encoding='utf-8') as meu_json:
                     dados = json.load(meu_json)
                     for i in dados:
                         if i['Id'] == entrada_idInt:
                             print(i['Id'], i['Consumo de Agua'], i['Nao Reciclaveis'], i['Energia Eletrica'], i['Tipo Transporte'])       
             except ValueError:
-                tk.messagebox.showinfo("Erro", "Por favor inserir um número")
+                tk.messagebox.showinfo("Erro", "Por favor inserir um número ou data")
         
         
         #-----Texto adicionar registro-----
@@ -130,20 +163,32 @@ def mudar_aba(aba):
                      text="Consultar Registros", 
                      text_color="black",
                      font=("Arial", 18))
-        texto_addRegistros.place(x=140, y=30)
+        texto_addRegistros.place(x=130, y=30)
         
         
         #-----Texto e entrada para consultar ID-----
         texto_consultarID = ctk.CTkLabel(frame1, 
                      text="Consultar por ID:", 
                      text_color="black")
-        texto_consultarID.place(x=80, y=75)
+        texto_consultarID.place(x=70, y=94)
         
         entrada_id = ctk.CTkEntry(frame1,
                                   corner_radius=50,
                                   width= 125,
                                   height= 35)
-        entrada_id.place(x=183, y=72)
+        entrada_id.place(x=195, y=92)   
+        
+        #-----Consulta por Data do sistema-----
+        texto_consultarData = ctk.CTkLabel(frame1, 
+                     text="Consultar pela Data:", 
+                     text_color="black")
+        texto_consultarData.place(x=70, y=145)
+        
+        Entrada_Data = ctk.CTkEntry(frame1,
+                                  corner_radius=50,
+                                  width= 125,
+                                  height= 35)
+        Entrada_Data.place(x=195, y=142)
         
         #-----Botão consultar ID-----
         botao_consultar = ctk.CTkButton(frame1, 
@@ -153,14 +198,14 @@ def mudar_aba(aba):
                       width= 145,
                       height= 35,
                       command=lambda: Consulta(entrada_id))
-        botao_consultar.place(x=140, y=110)
+        botao_consultar.place(x=140, y=200)
         
         
     #-----Aba Ações-----
     elif aba == "Acoes":
     
-        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Acoes.png'),
-                                    dark_image=Image.open('grafico prototipo PI\Acoes.png'),
+        minha_imagem = ctk.CTkImage(light_image=Image.open('D:\PUC\PI\projeto_integrador\grafico prototipo PI\Acoes.png'),
+                                    dark_image=Image.open('D:\PUC\PI\projeto_integrador\grafico prototipo PI\Acoes.png'),
                                     size=(360,500))
         label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
         label_foto.place(x=0, y=0)
@@ -168,8 +213,8 @@ def mudar_aba(aba):
         
     #-----Aba Graficos-----
     elif aba == "Grafico":
-        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Grafico.png'),
-                                    dark_image=Image.open('grafico prototipo PI\Grafico.png'),
+        minha_imagem = ctk.CTkImage(light_image=Image.open('D:\PUC\PI\projeto_integrador\grafico prototipo PI\Grafico.png'),
+                                    dark_image=Image.open('D:\PUC\PI\projeto_integrador\grafico prototipo PI\Grafico.png'),
                                     size=(360,450))
         label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
         label_foto.place(x=0, y=0)
@@ -177,8 +222,8 @@ def mudar_aba(aba):
     
     #-----Aba Graficos-----
     elif aba == "Estatistica":
-        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Estatistica.png'),
-                                    dark_image=Image.open('grafico prototipo PI\Estatistica.png'),
+        minha_imagem = ctk.CTkImage(light_image=Image.open('D:\PUC\PI\projeto_integrador\grafico prototipo PI\Estatistica.png'),
+                                    dark_image=Image.open('D:\PUC\PI\projeto_integrador\grafico prototipo PI\Estatistica.png'),
                                     size=(360,450))
         label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
         label_foto.place(x=0, y=0)
