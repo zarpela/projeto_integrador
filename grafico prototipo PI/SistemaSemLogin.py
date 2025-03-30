@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import tkinter as tk
+import json
 from PIL import Image
 
 #Instalar Pillow, customtkinter e tkinter
@@ -50,77 +51,110 @@ def mudar_aba(aba):
         texto_consumoAgua.place(x=110, y=75)
         
         entrada_agua = ctk.CTkEntry(frame1, 
+                                    corner_radius=50,
+                                    border_color="Grey",
                                     width=200)
         entrada_agua.place(x=110, y=100)
         
         #-----Texto e entrada da geração de resíduos-----
         texto_geracaoResiduos = ctk.CTkLabel(frame1,
-                     text="Não recicláveis (kg):",
-                     text_color="black",
-                     font=("Arial", 12))
+                                            text="Não recicláveis (kg):",
+                                            text_color="black",
+                                            font=("Arial", 12))
         texto_geracaoResiduos.place(x=110, y=135)
         
-        entrada_geracaoResiduos= ctk.CTkEntry(frame1, 
-                                         width=200)
+        entrada_geracaoResiduos= ctk.CTkEntry(frame1,
+                                            corner_radius=50, 
+                                            border_color="Grey",
+                                            width=200)
         entrada_geracaoResiduos.place(x=110, y=160)
         
         #-----Texto e entrada da energia gasta-----
         texto_energiaGasta = ctk.CTkLabel(frame1, 
-                     text="Energia elétrica (KWh):", 
-                     text_color="black",
-                     font=("Arial", 12))
+                                            text="Energia elétrica (KWh):", 
+                                            text_color="black",
+                                            font=("Arial", 12))
         texto_energiaGasta.place(x=110, y=195)
         
         entrada_energiaGasta = ctk.CTkEntry(frame1, 
-                                     width=200)
+                                            corner_radius=50,
+                                            border_color="Grey",
+                                            width=200)
         entrada_energiaGasta.place(x=110, y=220)
         
-        #-----Texto e entrada do tipo de transporte-----
-        texto_tipoTransporte = ctk.CTkLabel(frame1, 
-                     text="Tipo de transporte utilizado:",
-                     text_color="black",
-                     font=("Arial", 12))
+        #-----Texto e comboBox do tipo de transporte-----
+        texto_tipoTransporte = ctk.CTkLabel(frame1,
+                                            text="Tipo de transporte utilizado:",
+                                            text_color="black",
+                                            font=("Arial", 12))
         texto_tipoTransporte.place(x=110, y=255)
         
         transportes = ["Transporte Público", "Bicicleta", "Caminhada", "Carona", "Carro Particular", "Moto Particular"]
         entrada_tipoTransporte = ctk.CTkComboBox(frame1,
-                                        values=transportes, 
-                                        font=("Arial", 12),
-                                        width=200)
+                                            values=transportes, 
+                                            corner_radius= 15,
+                                            justify="left",
+                                            border_color="Grey",
+                                            width=200)
         entrada_tipoTransporte.place(x=110, y=280)
         
         #-----Botão adicionar registros-----
         botao_addResgistros = ctk.CTkButton(frame1, 
-                      text="Cadastrar", 
-                      fg_color="#474444", 
-                      corner_radius=50,
-                      width= 145,
-                      height= 35,
-                      command=lambda: tk.messagebox.showinfo("Cadastro", "Dados cadastrados com sucesso!"))
+                                            text="Cadastrar", 
+                                            fg_color="#474444", 
+                                            corner_radius=50,
+                                            width= 145,
+                                            height= 35,
+                                            command=lambda: tk.messagebox.showinfo("Cadastro", "Dados cadastrados com sucesso!"))
         botao_addResgistros.place(x=140, y=330)
+    
     
     #-----Aba "Consultar"-----
     elif aba == "Consultar":
         
+        #Função pegar valor, ler BD (atualmente .json) e depois retornar consulta
+        def Consulta(entradaId):
+            try: 
+                entrada_idInt = int(entrada_id.get())
+                with open("grafico prototipo PI\dados.json", encoding='utf-8') as meu_json:
+                    dados = json.load(meu_json)
+                    for i in dados:
+                        if i['Id'] == entrada_idInt:
+                            print(i['Id'], i['Consumo de Agua'], i['Nao Reciclaveis'], i['Energia Eletrica'], i['Tipo Transporte'])       
+            except ValueError:
+                tk.messagebox.showinfo("Erro", "Por favor inserir um número")
+        
+        
+        #-----Texto adicionar registro-----
         texto_addRegistros = ctk.CTkLabel(frame1, 
                      text="Consultar Registros", 
                      text_color="black",
                      font=("Arial", 18))
         texto_addRegistros.place(x=140, y=30)
         
+        
+        #-----Texto e entrada para consultar ID-----
         texto_consultarID = ctk.CTkLabel(frame1, 
                      text="Consultar por ID:", 
                      text_color="black")
-        texto_consultarID.place(x=110, y=75)
+        texto_consultarID.place(x=80, y=75)
         
-        entrada_id = ctk.CTkEntry(frame1, width=200)
-        entrada_id.place(x=110, y=100)
+        entrada_id = ctk.CTkEntry(frame1,
+                                  corner_radius=50,
+                                  width= 125,
+                                  height= 35)
+        entrada_id.place(x=183, y=72)
         
+        #-----Botão consultar ID-----
         botao_consultar = ctk.CTkButton(frame1, 
                       text="Consultar", 
                       fg_color="#474444", 
-                      command=lambda: tk.messagebox.showinfo("Consulta", "Exibir detalhes do registro..."))
-        botao_consultar.place(x=110, y=140)
+                      corner_radius=50,
+                      width= 145,
+                      height= 35,
+                      command=lambda: Consulta(entrada_id))
+        botao_consultar.place(x=140, y=110)
+        
         
     #-----Aba Ações-----
     elif aba == "Acoes":
@@ -131,6 +165,7 @@ def mudar_aba(aba):
         label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
         label_foto.place(x=0, y=0)
         
+        
     #-----Aba Graficos-----
     elif aba == "Grafico":
         minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Grafico.png'),
@@ -139,6 +174,8 @@ def mudar_aba(aba):
         label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
         label_foto.place(x=0, y=0)
     
+    
+    #-----Aba Graficos-----
     elif aba == "Estatistica":
         minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Estatistica.png'),
                                     dark_image=Image.open('grafico prototipo PI\Estatistica.png'),
@@ -146,7 +183,7 @@ def mudar_aba(aba):
         label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
         label_foto.place(x=0, y=0)
         
-
+#-----Botões do frame 2 (Menu)-----
 botao_adiconarRegistro = ctk.CTkButton(janela_principal,
                                 text="Adicionar registros",
                                 text_color="white",
