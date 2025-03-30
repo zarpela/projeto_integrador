@@ -203,13 +203,41 @@ def mudar_aba(aba):
         
     #-----Aba Ações-----
     elif aba == "Acoes":
-    
-        minha_imagem = ctk.CTkImage(light_image=Image.open('D:\PUC\PI\projeto_integrador\grafico prototipo PI\Acoes.png'),
-                                    dark_image=Image.open('D:\PUC\PI\projeto_integrador\grafico prototipo PI\Acoes.png'),
-                                    size=(360,500))
-        label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
-        label_foto.place(x=0, y=0)
+        #def Editar():
+        #def Excluir():
         
+        texto_acoes = ctk.CTkLabel(frame1, 
+                     text="Ações do Sistema", 
+                     text_color="black",
+                     font=("Arial", 18))
+        texto_acoes.place(x=125, y=30)
+    
+        #POR ENQUANTO -- ARRUMAR
+        texto_tabela = ctk.CTkLabel(frame1, 
+                     text="Tabela de Exibição", 
+                     text_color="blue",
+                     font=("Arial", 18))
+        texto_tabela.place(x=120, y=100)
+        
+        #-----Botão da ação editar-----
+        botao_editar = ctk.CTkButton(frame1, 
+                      text="Editar", 
+                      fg_color="#474444", 
+                      corner_radius=50,
+                      width= 145,
+                      height= 35)
+                      #command=lambda: Editar())
+        botao_editar.place(x=50, y=200) 
+
+        #-----Botão da ação excluir-----
+        botao_excluir = ctk.CTkButton(frame1, 
+                      text="Excluir", 
+                      fg_color="#474444", 
+                      corner_radius=50,
+                      width= 145,
+                      height= 35)
+                      #command=lambda: Editar())
+        botao_excluir.place(x=220, y=200) 
         
     #-----Aba Graficos-----
     elif aba == "Grafico":
