@@ -118,7 +118,7 @@ def mudar_aba(aba):
         # Função para carregar os dados do JSON
         def carregar_dados():
             try:
-                with open("grafico prototipo PI/dados.json", encoding='utf-8') as file:
+                with open("dados.json", encoding='utf-8') as file:
                     dados = json.load(file)
                     for item in tabela.get_children():
                         tabela.delete(item)
@@ -138,7 +138,7 @@ def mudar_aba(aba):
         def Consulta(entradaId):
             try: 
                 entrada_idInt = int(entrada_id.get())
-                with open("grafico prototipo PI\dados.json", encoding='utf-8') as meu_json:
+                with open("dados.json", encoding='utf-8') as meu_json:
                     dados = json.load(meu_json)
                     for item in tabela.get_children():
                         tabela.delete(item)
@@ -247,7 +247,7 @@ def mudar_aba(aba):
         # Função para carregar os dados do JSON
         def carregar_dados():
             try:
-                with open("grafico prototipo PI/dados.json", encoding='utf-8') as file:
+                with open("dados.json", encoding='utf-8') as file:
                     dados = json.load(file)
                     for item in tabela.get_children():
                         tabela.delete(item)
@@ -333,7 +333,7 @@ def mudar_aba(aba):
     #-----Aba Graficos-----
     elif aba == "Grafico":
             
-        with open("grafico prototipo PI\dados.json", encoding='utf-8') as jorge:
+        with open("dados.json", encoding='utf-8') as jorge:
             dados = json.load(jorge)
 
         if not dados:
@@ -365,13 +365,83 @@ def mudar_aba(aba):
         
     #-----Aba Graficos-----
     elif aba == "Estatistica":
-
-        minha_imagem = ctk.CTkImage(light_image=Image.open('grafico prototipo PI\Estatistica.png'),
-                                    dark_image=Image.open('grafico prototipo PI\Estatistica.png'),
-                                    size=(360,450))
-        label_foto = ctk.CTkLabel(frame1, text="", image=minha_imagem)
-        label_foto.place(x=0, y=0)
         
+        texto_TituloEstatisticas = ctk.CTkLabel(frame1, 
+                     text="Estatísticas do Usuário", 
+                     text_color="black",
+                     font=("Arial", 18))
+        texto_TituloEstatisticas.place(x=135, y=30)
+    
+        texto_estatisticasAgua = ctk.CTkLabel(frame1, 
+                     text="ÁGUA -> você precisa reduzir o consumo de água", 
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_estatisticasAgua.place(x=75, y=80)
+        
+        puxar_estatisticasAgua = ctk.CTkEntry(frame1, 
+                                    corner_radius=50,
+                                    border_color="Grey",
+                                    placeholder_text="40%",
+                                    width=60)
+        puxar_estatisticasAgua.configure(state="readonly")
+        puxar_estatisticasAgua.place(x=10, y=80)
+        
+        texto_estatisticasNaoReciclaveis = ctk.CTkLabel(frame1, 
+                     text="NÃO RECICLÁVEIS -> está OK", 
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_estatisticasNaoReciclaveis.place(x=75, y=120)
+        
+        puxar_estatisticasNaoReciclaveis = ctk.CTkEntry(frame1, 
+                                    corner_radius=50,
+                                    border_color="Grey",
+                                    placeholder_text="55%",
+                                    width=60)
+        puxar_estatisticasNaoReciclaveis.configure(state="readonly")
+        puxar_estatisticasNaoReciclaveis.place(x=10, y=120)
+
+        texto_estatisticasEnergia = ctk.CTkLabel(frame1, 
+                     text="ENERGIA ELÉTRICA -> Sustentável", 
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_estatisticasEnergia.place(x=75, y=160)
+        
+        puxar_estatisticasEnergia = ctk.CTkEntry(frame1, 
+                                    corner_radius=50,
+                                    border_color="Grey",
+                                    placeholder_text="85%",
+                                    width=60)
+        puxar_estatisticasEnergia.configure(state="readonly")
+        puxar_estatisticasEnergia.place(x=10, y=160)
+
+        texto_estatisticasTransporte = ctk.CTkLabel(frame1, 
+                     text="TRANSPORTE -> você precisa reduzir transportes privados", 
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_estatisticasTransporte.place(x=75, y=200)
+        
+        puxar_estatisticasTransporte = ctk.CTkEntry(frame1, 
+                                    corner_radius=50,
+                                    border_color="Grey",
+                                    placeholder_text="35%",
+                                    width=60)
+        puxar_estatisticasTransporte.configure(state="readonly")
+        puxar_estatisticasTransporte.place(x=10, y=200)
+        
+        texto_estatisticasPontuacao = ctk.CTkLabel(frame1, 
+                     text="ESTRELAS", 
+                     text_color="black",
+                     font=("Arial", 12))
+        texto_estatisticasPontuacao.place(x=170, y=260)
+        
+        puxar_estatisticasPontuacao = ctk.CTkEntry(frame1, 
+                                    corner_radius=50,
+                                    border_color="Grey",
+                                    placeholder_text="4",
+                                    width=60)
+        puxar_estatisticasPontuacao.configure(state="readonly")
+        puxar_estatisticasPontuacao.place(x=100, y=260)
+
 
 botao_adiconarRegistro = ctk.CTkButton(janela_principal,
                                 text="Adicionar registros",
