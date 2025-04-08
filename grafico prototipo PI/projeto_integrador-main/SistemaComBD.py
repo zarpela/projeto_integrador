@@ -324,7 +324,7 @@ def mudar_aba(aba):
         
     #-----Aba Ações-----
     elif aba == "Acoes":
-
+        #comeca aqui
         def Editar():
             try:
                 # Obtém o item selecionado na tabela
@@ -333,17 +333,69 @@ def mudar_aba(aba):
                     tk.messagebox.showinfo("Aviso", "Por favor, selecione um registro para editar.")
                     return
 
-                # Obtém o ID do registro selecionado
+                # Obtém os valores do registro selecionado
                 valores = tabela.item(item_selecionado, "values")
                 id_a_editar = int(valores[0])  # O ID está na primeira coluna da tabela
 
-                print (id_a_editar)
-                ("Sucesso", "Registro editado com sucesso.")
-            
+                # Cria uma nova janela para edição
+                janela_editar = tk.Toplevel()
+                janela_editar.title("Editar Registro")
+                janela_editar.geometry("300x350")
+
+                # Dados disponíveis para o ComboBox de transporte
+                opcoes_transporte = ["Transporte Público", "Bicicleta", "Caminhada", "Carona", "Carro Particular", "Moto Particular"]
+
+                # Campos de entrada para edição
+                tk.Label(janela_editar, text="Consumo de Água (L):").pack(pady=5)
+                entrada_agua = tk.Entry(janela_editar)
+                entrada_agua.insert(0, valores[1])  # Preenche com o valor atual
+                entrada_agua.pack(pady=5)
+
+                tk.Label(janela_editar, text="Não Recicláveis (kg):").pack(pady=5)
+                entrada_residuos = tk.Entry(janela_editar)
+                entrada_residuos.insert(0, valores[2])
+                entrada_residuos.pack(pady=5)
+
+                tk.Label(janela_editar, text="Energia Elétrica (KWh):").pack(pady=5)
+                entrada_energia = tk.Entry(janela_editar)
+                entrada_energia.insert(0, valores[3])
+                entrada_energia.pack(pady=5)
+
+                tk.Label(janela_editar, text="Tipo de Transporte:").pack(pady=5)
+                entrada_transporte = ttk.Combobox(janela_editar, values=opcoes_transporte)
+                entrada_transporte.set(valores[4])  # Preenche com o valor atual
+                entrada_transporte.pack(pady=5)
+
+                # Função para salvar as alterações
+                def salvar_alteracoes():
+                    try:
+                        novo_agua = float(entrada_agua.get())
+                        novo_residuos = float(entrada_residuos.get())
+                        novo_energia = float(entrada_energia.get())
+                        novo_transporte = entrada_transporte.get()
+
+                        # Atualiza o registro no banco de dados
+                        cursor = bd.banco.cursor()
+                        cursor.execute("""
+                            UPDATE sustentabilidade
+                            SET s_agua = %s, s_reciclaveis = %s, s_energia = %s, s_transporte = %s
+                            WHERE s_id = %s
+                        """, (novo_agua, novo_residuos, novo_energia, novo_transporte, id_a_editar))
+                        bd.banco.commit()
+
+                        # Atualiza a tabela e fecha a janela
+                        tk.messagebox.showinfo("Sucesso", "Registro atualizado com sucesso!")
+                        carregar_dados()
+                        janela_editar.destroy()
+                    except Exception as e:
+                        tk.messagebox.showerror("Erro", f"Erro ao salvar alterações: {e}")
+
+                # Botão para salvar as alterações
+                tk.Button(janela_editar, text="Salvar", command=salvar_alteracoes).pack(pady=20)
+
             except Exception as e:
                 tk.messagebox.showerror("Erro", f"Erro ao editar dados: {e}")
-            
-
+        #termina aqui
         def Excluir():
             try:
                 # Obtém o item selecionado na tabela
