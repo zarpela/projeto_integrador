@@ -1,4 +1,5 @@
 -- Cria a tabela 'usuarios' caso ela não exista
+
 CREATE TABLE IF NOT EXISTS usuarios ( 
     u_id INTEGER AUTO_INCREMENT PRIMARY KEY,  -- Identificador único para cada usuário (chave primária, auto incremento)
     u_un VARCHAR(50) NOT NULL UNIQUE,         -- Nome de usuário (único, não pode ser nulo)

@@ -32,6 +32,75 @@ frame2 = ctk.CTkFrame(janela_principal,
                           bg_color="#cccccc")
 frame2.place(x=400, y=0)
     
+#----Atribuir cores nas estatísticas-----
+def criar_bloco_estatistica_agua(master, titulo, valor, mensagem, y_pos):
+        cor = "green" if valor >= 0 and valor <=100 else "yellow" if valor > 100 and valor <= 150 else "red"
+
+        texto = ctk.CTkLabel(master, 
+                            text=f"{titulo.upper()} -> {mensagem}", 
+                            text_color="black",
+                            font=("Arial", 12))
+        texto.place(x=95, y=y_pos)
+
+        entrada = ctk.CTkEntry(master, 
+                            corner_radius=50,
+                            border_color=cor,
+                            placeholder_text=f"{valor}",
+                            width=75)
+        entrada.configure(state="readonly")
+        entrada.place(x=15, y=y_pos) 
+        
+def criar_bloco_estatistica_reciclaveis(master, titulo, valor, mensagem, y_pos):
+        cor = "green" if valor >= 0.5 and valor < 0.95 else "yellow" if valor >= 0.95 and valor <= 1.25 else "red"
+
+        texto = ctk.CTkLabel(master, 
+                            text=f"{titulo.upper()} -> {mensagem}", 
+                            text_color="black",
+                            font=("Arial", 12))
+        texto.place(x=95, y=y_pos)
+
+        entrada = ctk.CTkEntry(master, 
+                            corner_radius=50,
+                            border_color=cor,
+                            placeholder_text=f"{valor}",
+                            width=75)
+        entrada.configure(state="readonly")
+        entrada.place(x=15, y=y_pos) 
+
+def criar_bloco_estatistica_energia(master, titulo, valor, mensagem, y_pos):
+        cor = "green" if valor >= 2.5 and valor <= 4.5 else "yellow" if valor > 4.5 and valor <= 6 else "red"
+
+        texto = ctk.CTkLabel(master, 
+                            text=f"{titulo.upper()} -> {mensagem}", 
+                            text_color="black",
+                            font=("Arial", 12))
+        texto.place(x=95, y=y_pos)
+
+        entrada = ctk.CTkEntry(master, 
+                            corner_radius=50,
+                            border_color=cor,
+                            placeholder_text=f"{valor}",
+                            width=75)
+        entrada.configure(state="readonly")
+        entrada.place(x=15, y=y_pos) 
+
+def criar_bloco_estatistica_transporte(master, titulo, valor, mensagem, y_pos):
+        cor = "green" if valor == 0  else "yellow" if valor >=0.25 and valor <= 0.5 else "red"
+
+        texto = ctk.CTkLabel(master, 
+                            text=f"{titulo.upper()} -> {mensagem}", 
+                            text_color="black",
+                            font=("Arial", 12))
+        texto.place(x=95, y=y_pos)
+
+        entrada = ctk.CTkEntry(master, 
+                            corner_radius=50,
+                            border_color=cor,
+                            placeholder_text=f"{valor}",
+                            width=75)
+        entrada.configure(state="readonly")
+        entrada.place(x=15, y=y_pos) 
+    
 #-----Mudar Abas-----
 def mudar_aba(aba):
     for widget in frame1.winfo_children():
@@ -147,8 +216,6 @@ def mudar_aba(aba):
                 cursor.close()
                 # Limpa os campos após o cadastro
                 
-            
-    
     #-----Aba "Consultar"-----
     elif aba == "Consultar":
         
@@ -536,82 +603,80 @@ def mudar_aba(aba):
         
     #-----Aba Estatistica-----
     elif aba == "Estatistica":
-        
-        texto_TituloEstatisticas = ctk.CTkLabel(frame1, 
-                     text="Estatísticas do Usuário", 
-                     text_color="black",
-                     font=("Arial", 18))
-        texto_TituloEstatisticas.place(x=135, y=30)
     
-        texto_estatisticasAgua = ctk.CTkLabel(frame1, 
-                     text="ÁGUA -> você precisa reduzir o consumo de água", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_estatisticasAgua.place(x=75, y=80)
-        
-        puxar_estatisticasAgua = ctk.CTkEntry(frame1, 
-                                    corner_radius=50,
-                                    border_color="Grey",
-                                    placeholder_text="40%",
-                                    width=60)
-        puxar_estatisticasAgua.configure(state="readonly")
-        puxar_estatisticasAgua.place(x=10, y=80)
-        
-        texto_estatisticasNaoReciclaveis = ctk.CTkLabel(frame1, 
-                     text="NÃO RECICLÁVEIS -> está OK", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_estatisticasNaoReciclaveis.place(x=75, y=120)
-        
-        puxar_estatisticasNaoReciclaveis = ctk.CTkEntry(frame1, 
-                                    corner_radius=50,
-                                    border_color="Grey",
-                                    placeholder_text="55%",
-                                    width=60)
-        puxar_estatisticasNaoReciclaveis.configure(state="readonly")
-        puxar_estatisticasNaoReciclaveis.place(x=10, y=120)
+        cursor = bd.banco.cursor()
+        cursor.execute("""
+            SELECT JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'Id', s_id,
+                    'Data', s_data,
+                    'Consumo de Agua', s_agua,
+                    'Nao Reciclaveis', s_reciclaveis,
+                    'Energia Eletrica', s_energia,
+                    'Tipo Transporte', s_transporte
+                )
+            ) AS dados_json
+            FROM sustentabilidade;
+        """)
 
-        texto_estatisticasEnergia = ctk.CTkLabel(frame1, 
-                     text="ENERGIA ELÉTRICA -> Sustentável", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_estatisticasEnergia.place(x=75, y=160)
-        
-        puxar_estatisticasEnergia = ctk.CTkEntry(frame1, 
-                                    corner_radius=50,
-                                    border_color="Grey",
-                                    placeholder_text="85%",
-                                    width=60)
-        puxar_estatisticasEnergia.configure(state="readonly")
-        puxar_estatisticasEnergia.place(x=10, y=160)
+        resultado = cursor.fetchone()
 
-        texto_estatisticasTransporte = ctk.CTkLabel(frame1, 
-                     text="TRANSPORTE -> você precisa reduzir transportes privados", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_estatisticasTransporte.place(x=75, y=200)
-        
-        puxar_estatisticasTransporte = ctk.CTkEntry(frame1, 
-                                    corner_radius=50,
-                                    border_color="Grey",
-                                    placeholder_text="35%",
-                                    width=60)
-        puxar_estatisticasTransporte.configure(state="readonly")
-        puxar_estatisticasTransporte.place(x=10, y=200)
-        
-        texto_estatisticasPontuacao = ctk.CTkLabel(frame1, 
-                     text="ESTRELAS", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_estatisticasPontuacao.place(x=170, y=260)
-        
-        puxar_estatisticasPontuacao = ctk.CTkEntry(frame1, 
-                                    corner_radius=50,
-                                    border_color="Grey",
-                                    placeholder_text="4",
-                                    width=60)
-        puxar_estatisticasPontuacao.configure(state="readonly")
-        puxar_estatisticasPontuacao.place(x=100, y=260)
+        texto_estatisticas = ctk.CTkLabel(
+            frame1,
+            text="Estatísticas média do Usuário",
+            text_color="black",
+            font=("Arial", 18)
+        )
+        texto_estatisticas.place(x=90, y=30)
+
+        if resultado and resultado[0]:
+            cursor.execute("SELECT AVG(s_agua), AVG(s_reciclaveis), AVG(s_energia), AVG(s_transporte) FROM sustentabilidade")
+            resultado = cursor.fetchone()
+
+            if resultado and all(v is not None for v in resultado):
+                s_agua, s_reciclaveis, s_energia, media_transporte = [round(v, 2) for v in resultado]
+
+                transporte_sustentavel = round((1 - media_transporte) * 100, 2)
+
+                pontuacao = int(round(
+                    ((s_agua * 0.2) +
+                    (s_reciclaveis * 0.3) +
+                    (s_energia * 0.3) +
+                    (transporte_sustentavel * 0.2)) / 100 * 5
+                ))
+
+                dados = {
+                    "agua": {"valor": s_agua, "mensagem": "você precisa reduzir o consumo de água"},
+                    "nao_reciclaveis": {"valor": s_reciclaveis, "mensagem": "está OK"},
+                    "energia": {"valor": s_energia, "mensagem": "Sustentável"},
+                    "transporte": {"valor": transporte_sustentavel, "mensagem": "Considere meios mais sustentáveis"},
+                    "pontuacao": pontuacao
+                }
+
+                criar_bloco_estatistica_agua(frame1, "ÁGUA", dados["agua"]["valor"], dados["agua"]["mensagem"], 80)
+                criar_bloco_estatistica_reciclaveis(frame1, "NÃO RECICLÁVEIS", dados["nao_reciclaveis"]["valor"], dados["nao_reciclaveis"]["mensagem"], 120)
+                criar_bloco_estatistica_energia(frame1, "ENERGIA ELÉTRICA", dados["energia"]["valor"], dados["energia"]["mensagem"], 160)
+                criar_bloco_estatistica_transporte(frame1, "TRANSPORTE", dados["transporte"]["valor"], dados["transporte"]["mensagem"], 200)
+
+                texto_estatisticasPontuacao = ctk.CTkLabel(
+                    frame1, text="ESTRELAS", text_color="black", font=("Arial", 12)
+                )
+                texto_estatisticasPontuacao.place(x=180, y=260)
+
+                puxar_estatisticasPontuacao = ctk.CTkEntry(
+                    frame1,
+                    corner_radius=50,
+                    border_color="gold",
+                    placeholder_text=str(dados["pontuacao"]),
+                    width=70
+                )
+                puxar_estatisticasPontuacao.configure(state="readonly")
+                puxar_estatisticasPontuacao.place(x=100, y=260)
+
+            else:
+                tk.messagebox.showinfo("Estatísticas", "Não foi possível calcular as médias.")
+        else:
+            tk.messagebox.showinfo("Estatísticas", "Nenhum dado encontrado no banco de dados.")
 
 
 botao_adiconarRegistro = ctk.CTkButton(janela_principal,
