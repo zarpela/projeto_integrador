@@ -5,22 +5,8 @@ import json
 from PIL import Image
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
-#importar biblioteca que retorna data do ano
 from datetime import date
-
-
-#Instalar Pillow, customtkinter e tkinter
-
-import mysql.connector as conexao
-
-banco = conexao.connect(
-    host = "localhost",
-    user = "root",
-    password = "zarpela123",
-    database= "sustentabilidade",
-    autocommit=True
-    )
+import bd
 
 ctk.set_appearance_mode("Dark")
 
@@ -45,6 +31,82 @@ frame2 = ctk.CTkFrame(janela_principal,
                           fg_color="#cccccc", 
                           bg_color="#cccccc")
 frame2.place(x=400, y=0)
+
+
+#----Atribuir cores nas estatísticas----- *RETIRAR O QUANTO ANTES*
+def criar_bloco_estatistica_agua(master, titulo, valor, mensagem, y_pos):
+        cor = "green" if valor >= 0 and valor <=100 else "yellow" if valor > 100 and valor <= 150 else "red"
+
+        texto = ctk.CTkLabel(master, 
+                            text=f"{titulo.upper()} -> {mensagem}", 
+                            text_color="black",
+                            font=("Arial", 12))
+        texto.place(x=95, y=y_pos)
+
+        entrada = ctk.CTkEntry(master, 
+                            corner_radius=50,
+                            border_color=cor,
+                            placeholder_text=f"{valor}",
+                            width=75)
+        entrada.configure(state="readonly")
+        entrada.place(x=15, y=y_pos) 
+        
+def criar_bloco_estatistica_reciclaveis(master, titulo, valor, mensagem, y_pos):
+        cor = "green" if valor >= 0.5 and valor < 0.95 else "yellow" if valor >= 0.95 and valor <= 1.25 else "red"
+
+        texto = ctk.CTkLabel(master, 
+                            text=f"{titulo.upper()} -> {mensagem}", 
+                            text_color="black",
+                            font=("Arial", 12))
+        texto.place(x=95, y=y_pos)
+
+        entrada = ctk.CTkEntry(master, 
+                            corner_radius=50,
+                            border_color=cor,
+                            placeholder_text=f"{valor}",
+                            width=75)
+        entrada.configure(state="readonly")
+        entrada.place(x=15, y=y_pos) 
+
+def criar_bloco_estatistica_energia(master, titulo, valor, mensagem, y_pos):
+        cor = "green" if valor >= 2.5 and valor <= 4.5 else "yellow" if valor > 4.5 and valor <= 6 else "red"
+
+        texto = ctk.CTkLabel(master, 
+                            text=f"{titulo.upper()} -> {mensagem}", 
+                            text_color="black",
+                            font=("Arial", 12))
+        texto.place(x=95, y=y_pos)
+
+        entrada = ctk.CTkEntry(master, 
+                            corner_radius=50,
+                            border_color=cor,
+                            placeholder_text=f"{valor}",
+                            width=75)
+        entrada.configure(state="readonly")
+        entrada.place(x=15, y=y_pos) 
+
+def criar_bloco_estatistica_transporte(master, titulo, valor, mensagem, y_pos):
+        cor = "green" if valor == 0  else "yellow" if valor >=0.25 and valor <= 0.5 else "red"
+
+        texto = ctk.CTkLabel(master, 
+                            text=f"{titulo.upper()} -> {mensagem}", 
+                            text_color="black",
+                            font=("Arial", 12))
+        texto.place(x=95, y=y_pos)
+
+        entrada = ctk.CTkEntry(master, 
+                            corner_radius=50,
+                            border_color=cor,
+                            placeholder_text=f"{valor}",
+                            width=75)
+        entrada.configure(state="readonly")
+        entrada.place(x=15, y=y_pos) 
+        
+#---- *RETIRAR O QUANTO ANTES* ----- 
+    
+    
+    
+    
     
 #-----Mudar Abas-----
 def mudar_aba(aba):
@@ -131,7 +193,7 @@ def mudar_aba(aba):
             add_residuos = entrada_geracaoResiduos.get()
             add_energia = entrada_energiaGasta.get()
             add_transporte = entrada_tipoTransporte.get()
-            cursor = banco.cursor()
+            cursor = bd.banco.cursor()
             try:
                 # Verifica se os campos estão preenchidos
                 if not add_agua or not add_residuos or not add_energia or not add_transporte:
@@ -148,23 +210,19 @@ def mudar_aba(aba):
                         add_transporte
                     )
                     cursor.execute("INSERT INTO sustentabilidade (su_id, s_data, s_agua, s_reciclaveis, s_energia, s_transporte) VALUES (%s, %s, %s, %s, %s, %s)", dados)
-                    banco.commit()
-                    print("nice")
+                    bd.banco.commit()
+                    entrada_agua.delete(0, tk.END)
+                    entrada_geracaoResiduos.delete(0, tk.END)
+                    entrada_energiaGasta.delete(0, tk.END)
+                    entrada_tipoTransporte.set("")
+                    tk.messagebox.showinfo("Cadastro", "Dados cadastrados com sucesso!")
             except Exception as e:
                 tk.messagebox.showerror("Erro", f"Erro ao adicionar dados: {e}")
             finally:
                 cursor.close()
                 # Limpa os campos após o cadastro
-                entrada_agua.delete(0, tk.END)
-                entrada_geracaoResiduos.delete(0, tk.END)
-                entrada_energiaGasta.delete(0, tk.END)
-                entrada_tipoTransporte.set("")
-                tk.messagebox.showinfo("Cadastro", "Dados cadastrados com sucesso!")
+                
             
-            
-
-        
-    
     
     #-----Aba "Consultar"-----
     elif aba == "Consultar":
@@ -173,11 +231,12 @@ def mudar_aba(aba):
         def carregar_dados():
             try:
         # Consulta ao banco de dados para obter os dados no formato JSON
-                cursor = banco.cursor()
+                cursor = bd.banco.cursor()
                 cursor.execute("""
                     SELECT JSON_ARRAYAGG(
                     JSON_OBJECT(
                         'Id', s_id,
+                        'Data', s_data,
                         'Consumo de Agua', s_agua,
                         'Nao Reciclaveis', s_reciclaveis,
                         'Energia Eletrica', s_energia,
@@ -200,7 +259,8 @@ def mudar_aba(aba):
                         item.get("Consumo de Agua", ""),
                         item.get("Nao Reciclaveis", ""),
                         item.get("Energia Eletrica", ""),
-                        item.get("Tipo Transporte", "")
+                        item.get("Tipo Transporte", ""),
+                        item.get("Data", "")
                 ))
                 else:
                     tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado.")
@@ -212,13 +272,14 @@ def mudar_aba(aba):
         def Consulta(entradaId):
             try:
                 entrada_idInt = int(entrada_id.get())  # Obtém o ID inserido pelo usuário
-                cursor = banco.cursor()
+                cursor = bd.banco.cursor()
                 
                 # Consulta ao banco de dados para obter os dados no formato JSON
                 cursor.execute(f"""
                     SELECT JSON_ARRAYAGG(
                         JSON_OBJECT(
                             'Id', s_id,
+                            'Data', s_data,
                             'Consumo de Agua', s_agua,
                             'Nao Reciclaveis', s_reciclaveis,
                             'Energia Eletrica', s_energia,
@@ -241,7 +302,8 @@ def mudar_aba(aba):
                             item.get("Consumo de Agua", ""),
                             item.get("Nao Reciclaveis", ""),
                             item.get("Energia Eletrica", ""),
-                            item.get("Tipo Transporte", "")
+                            item.get("Tipo Transporte", ""),
+                            item.get("Data", "")
                          ))
                 else:
                     tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para o ID informado.")
@@ -285,7 +347,7 @@ def mudar_aba(aba):
                                     fg_color="white",
                                     width=380,
                                     height=250)
-        tabela_frame.place(x=10, y=160)
+        tabela_frame.place(x=5, y=160)
         
         #-----Botão consultar ID-----
         botao_limpar = ctk.CTkButton(frame1, text="Limpar Tabela",
@@ -302,7 +364,7 @@ def mudar_aba(aba):
         scroll_x = tk.Scrollbar(tabela_frame, orient="horizontal")
 
         #-----Criar tabela-----
-        colunas = ("Id", "Água (L)", "Resíduos", "Energia", "Transporte")
+        colunas = ("Id", "Água (L)", "Resíduos", "Energia", "Transporte", "Data")
         tabela = ttk.Treeview (tabela_frame,
                                columns=colunas,
                                show="headings",
@@ -320,11 +382,12 @@ def mudar_aba(aba):
         tabela.pack(expand=True, fill="both")
 
         #-----Definir largura das colunas (mais compactas)-----
-        tabela.column("Id", width=30, anchor="center")
-        tabela.column("Água (L)", width=80, anchor="center")
-        tabela.column("Resíduos", width=75, anchor="center")
-        tabela.column("Energia", width=75, anchor="center")
+        tabela.column("Id", width=20, anchor="center")
+        tabela.column("Água (L)", width=59, anchor="center")
+        tabela.column("Resíduos", width=59, anchor="center")
+        tabela.column("Energia", width=59, anchor="center")
         tabela.column("Transporte", width=110, anchor="center")
+        tabela.column("Data", width=70, anchor="center")
 
         #-----Definir cabeçalhos das colunas-----
         for col in colunas:
@@ -336,6 +399,86 @@ def mudar_aba(aba):
         
     #-----Aba Ações-----
     elif aba == "Acoes":
+        
+        #Função Editar
+        def Editar():
+            try:
+                # Obtém o item selecionado na tabela
+                item_selecionado = tabela.selection()
+                if not item_selecionado:
+                    tk.messagebox.showinfo("Aviso", "Por favor, selecione um registro para editar.")
+                    return
+
+                # Obtém os valores do registro selecionado
+                valores = tabela.item(item_selecionado, "values")
+                id_a_editar = int(valores[0])  # O ID está na primeira coluna da tabela
+
+                # Cria uma nova janela para edição
+                
+                janela_editar = ctk.CTkToplevel()
+                janela_editar.title("Editar Registro")
+                janela_editar.geometry("350x400")
+
+                # Dados disponíveis para o ComboBox de transporte
+                opcoes_transporte = ["Transporte Público", "Bicicleta", "Caminhada", "Carona", "Carro Particular", "Moto Particular"]
+
+                # Campos de entrada para edição
+                
+                texto_editarRegistros = ctk.CTkLabel(janela_editar,
+                     text="Adicionar Registros", 
+                     text_color="white",
+                     font=("Arial", 18)).pack(pady=3)
+                
+                ctk.CTkLabel(janela_editar, text="Consumo de Água (L):").pack(pady=3)
+                entrada_agua = ctk.CTkEntry(janela_editar, corner_radius=50)
+                entrada_agua.insert(0, valores[1])  # Preenche com o valor atual
+                entrada_agua.pack(pady=5)
+
+                ctk.CTkLabel(janela_editar, text="Não Recicláveis (kg):").pack(pady=3)
+                entrada_residuos = ctk.CTkEntry(janela_editar, corner_radius=50)
+                entrada_residuos.insert(0, valores[2])
+                entrada_residuos.pack(pady=5)
+
+                ctk.CTkLabel(janela_editar, text="Energia Elétrica (KWh):").pack(pady=3)
+                entrada_energia = ctk.CTkEntry(janela_editar, corner_radius=50)
+                entrada_energia.insert(0, valores[3])
+                entrada_energia.pack(pady=5)
+
+                ctk.CTkLabel(janela_editar, text="Tipo de Transporte:").pack(pady=3)
+                entrada_transporte = ctk.CTkComboBox(janela_editar, corner_radius=10, values=opcoes_transporte)
+                entrada_transporte.set(valores[4])  # Preenche com o valor atual
+                entrada_transporte.pack(pady=5)
+
+                # Função para salvar as alterações
+                def salvar_alteracoes():
+                    try:
+                        novo_agua = float(entrada_agua.get())
+                        novo_residuos = float(entrada_residuos.get())
+                        novo_energia = float(entrada_energia.get())
+                        novo_transporte = entrada_transporte.get()
+
+                        # Atualiza o registro no banco de dados
+                        cursor = bd.banco.cursor()
+                        cursor.execute("""
+                            UPDATE sustentabilidade
+                            SET s_agua = %s, s_reciclaveis = %s, s_energia = %s, s_transporte = %s
+                            WHERE s_id = %s
+                        """, (novo_agua, novo_residuos, novo_energia, novo_transporte, id_a_editar))
+                        bd.banco.commit()
+
+                        # Atualiza a tabela e fecha a janela
+                        tk.messagebox.showinfo("Sucesso", "Registro atualizado com sucesso!")
+                        carregar_dados()
+                        janela_editar.destroy()
+                    except Exception as e:
+                        tk.messagebox.showerror("Erro", f"Erro ao salvar alterações: {e}")
+
+                # Botão para salvar as alterações
+                ctk.CTkButton(janela_editar, text="Salvar", command=salvar_alteracoes).pack(pady=20)
+
+            except Exception as e:
+                tk.messagebox.showerror("Erro", f"Erro ao editar dados: {e}")
+            
 
         def Excluir():
             try:
@@ -355,9 +498,9 @@ def mudar_aba(aba):
                     return
 
                 # Executa a exclusão no banco de dados
-                cursor = banco.cursor()
+                cursor = bd.banco.cursor()
                 cursor.execute(f"DELETE FROM sustentabilidade WHERE s_id = {id_a_deletar};")
-                banco.commit()
+                bd.banco.commit()
 
                 # Verifica se o registro foi excluído
                 if cursor.rowcount > 0:
@@ -371,7 +514,7 @@ def mudar_aba(aba):
         # Função para carregar os dados do banco de dados
         def carregar_dados():
             try:
-                cursor = banco.cursor()
+                cursor = bd.banco.cursor()
                 cursor.execute("""
                     SELECT JSON_ARRAYAGG(
                         JSON_OBJECT(
@@ -379,7 +522,8 @@ def mudar_aba(aba):
                             'Consumo de Agua', s_agua,
                             'Nao Reciclaveis', s_reciclaveis,
                             'Energia Eletrica', s_energia,
-                            'Tipo Transporte', s_transporte
+                            'Tipo Transporte', s_transporte,
+                            "Data", s_data
                         )
                     ) AS dados_json
                     FROM sustentabilidade;
@@ -397,7 +541,8 @@ def mudar_aba(aba):
                             item.get("Consumo de Agua", ""),
                             item.get("Nao Reciclaveis", ""),
                             item.get("Energia Eletrica", ""),
-                            item.get("Tipo Transporte", "")
+                            item.get("Tipo Transporte", ""),
+                            item.get("Data", "")
                          ))
                 else:
                     tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado.")
@@ -409,14 +554,14 @@ def mudar_aba(aba):
                                     fg_color="white",
                                     width=380,
                                     height=250)
-        tabela_frame.place(x=10, y=75)
+        tabela_frame.place(x=5, y=75)
 
         # Criar barras de rolagem
         scroll_y = tk.Scrollbar(tabela_frame, orient="vertical")
         scroll_x = tk.Scrollbar(tabela_frame, orient="horizontal")
 
         # Criar tabela
-        colunas = ("Id", "Água (L)", "Resíduos", "Energia", "Transporte")
+        colunas = ("Id", "Água (L)", "Resíduos", "Energia", "Transporte", "Data")
         tabela = ttk.Treeview(tabela_frame,
                               columns=colunas,
                               show="headings",
@@ -434,11 +579,12 @@ def mudar_aba(aba):
         tabela.pack(expand=True, fill="both")
 
         # Definir largura das colunas (mais compactas)
-        tabela.column("Id", width=30, anchor="center")
-        tabela.column("Água (L)", width=80, anchor="center")
-        tabela.column("Resíduos", width=75, anchor="center")
-        tabela.column("Energia", width=75, anchor="center")
+        tabela.column("Id", width=20, anchor="center")
+        tabela.column("Água (L)", width=59, anchor="center")
+        tabela.column("Resíduos", width=59, anchor="center")
+        tabela.column("Energia", width=59, anchor="center")
         tabela.column("Transporte", width=110, anchor="center")
+        tabela.column("Data", width=70, anchor="center")
 
         # Definir cabeçalhos das colunas
         for col in colunas:
@@ -459,7 +605,8 @@ def mudar_aba(aba):
                                      fg_color="#474444",
                                      corner_radius=50,
                                      width=145,
-                                     height=35)
+                                     height=35,
+                                     command=Editar)
         botao_editar.place(x=50, y=350)
 
         # Botão da ação excluir
@@ -475,132 +622,223 @@ def mudar_aba(aba):
     
     #-----Aba Graficos-----
     elif aba == "Grafico":
-        try:
-            cursor = banco.cursor()
-            cursor.execute("""
-                SELECT JSON_ARRAYAGG(
-                    JSON_OBJECT(
-                        'Consumo de Agua', s_agua,
-                        'Nao Reciclaveis', s_reciclaveis,
-                        'Energia Eletrica', s_energia
-                    )
-                ) AS dados_json
-                FROM sustentabilidade;
-            """)
+            try:
+                cursor = bd.banco.cursor()
+                cursor.execute("""
+                    SELECT JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'Consumo de Agua', s_agua,
+                            'Nao Reciclaveis', s_reciclaveis,
+                            'Energia Eletrica', s_energia
+                        )
+                    ) AS dados_json
+                    FROM sustentabilidade;
+                """)
+                resultado = cursor.fetchone()
+
+                if resultado and resultado[0]:
+                    dados = json.loads(resultado[0])
+                    num_registros = len(dados)
+
+                    categorias = ["Água", "Não Recicláveis", "Energia"]
+                    valores = [
+                        sum(dado["Consumo de Agua"] for dado in dados) / num_registros,
+                        sum(dado["Nao Reciclaveis"] for dado in dados) / num_registros,
+                        sum(dado["Energia Eletrica"] for dado in dados) / num_registros
+                    ]
+
+                    texto_grafico = ctk.CTkLabel(frame1,
+                                                text="Gráfico de Sustentabilidade",
+                                                text_color="black",
+                                                font=("Arial", 18))
+                    texto_grafico.place(x=90, y=10)
+
+                    # --- Criação da figura do gráfico ---
+                    fig, ax = plt.subplots(figsize=(4.0, 3.2))
+
+                    # --- Função de atualização do gráfico ---
+                    def atualizar_grafico(event=None):
+                            tipo = combo_tipo.get()
+
+                            # Remove o gráfico antigo do frame (caso exista)
+                            for widget in frame1.winfo_children():
+                                if isinstance(widget, FigureCanvasTkAgg):
+                                    widget.get_tk_widget().destroy()
+
+                            # Define os dados de categorias (fixo para barras e pizza padrão)
+                            categorias = ["Água", "Não Recicláveis", "Energia"]
+
+                            # Dados para gráfico de barras (médias)
+                            valores_barras = [
+                                sum(dado["Consumo de Agua"] for dado in dados) / num_registros,
+                                sum(dado["Nao Reciclaveis"] for dado in dados) / num_registros,
+                                sum(dado["Energia Eletrica"] for dado in dados) / num_registros
+                            ]
+
+                            # Define tamanho do gráfico por tipo
+                            if tipo == "Médias":
+                                fig, ax = plt.subplots(figsize=(4.2, 3.2))
+
+                                # Categorias e valores originais
+                                categorias = ["Água", "Não Recicláveis", "Energia"]
+                                ax.bar(categorias, valores_barras, color=['blue', 'green', 'red'])
+                                ax.set_ylabel("Média dos Valores")
+
+                            elif tipo == "Transporte":
+                                cursor.execute("""
+                                    SELECT s_transporte, COUNT(*) 
+                                    FROM sustentabilidade 
+                                    GROUP BY s_transporte;
+                                """)
+                                resultados = cursor.fetchall()
+
+                                labels_transporte = [linha[0] for linha in resultados]
+                                valores_transporte = [linha[1] for linha in resultados]
+
+                                fig, ax = plt.subplots(figsize=(4.0, 3.2))  # maior para caber os nomes dos transportes
+                                ax.set_position([0.1, 0.1, 0.78, 0.73])  # [esquerda, baixo, largura, altura]
+                                ax.pie(valores_transporte,
+                                    labels=labels_transporte,
+                                    autopct='%1.1f%%',
+                                    startangle=140,
+                                    radius=0.5)
+                                ax.axis('equal')
+                            elif tipo == "Máximos e Mínimos":
+                                fig, ax = plt.subplots(figsize=(4.2, 3.2))
+
+                                # Categorias
+                                categorias = ["Água", "Não Recicláveis", "Energia"]
+
+                                # Máximos e mínimos por categoria
+                                maximos = [
+                                    max(dado["Consumo de Agua"] for dado in dados),
+                                    max(dado["Nao Reciclaveis"] for dado in dados),
+                                    max(dado["Energia Eletrica"] for dado in dados)
+                                ]
+                                minimos = [
+                                    min(dado["Consumo de Agua"] for dado in dados),
+                                    min(dado["Nao Reciclaveis"] for dado in dados),
+                                    min(dado["Energia Eletrica"] for dado in dados)
+                                ]
+
+                                # Largura das barras
+                                largura = 0.35
+                                x = range(len(categorias))
+
+                                # Barras lado a lado
+                                ax.bar([i - largura/2 for i in x], maximos, width=largura, label="Máximo", color="red")
+                                ax.bar([i + largura/2 for i in x], minimos, width=largura, label="Mínimo", color="blue")
+
+                                ax.set_xticks(x)
+                                ax.set_xticklabels(categorias)
+                                ax.set_ylabel("Valores")
+                                ax.set_title("Máximos e Mínimos por Categoria")
+                                ax.legend()
+
+                            # Insere o novo gráfico
+                            canvas = FigureCanvasTkAgg(fig, master=frame1)
+                            canvas.draw()
+                            canvas.get_tk_widget().place(x=10, y=70)
+
+
+                    # --- Combobox customtkinter ---
+                    combo_tipo = ctk.CTkComboBox(frame1,
+                    values=["Médias", "Máximos e Mínimos", "Transporte"],
+                    command=atualizar_grafico,
+                    width=160,
+                    dropdown_font=("Arial", 12),
+                    font=("Arial", 12))
+                    combo_tipo.set("Médias")
+                    combo_tipo.place(x=110, y=40)
+
+                    # --- Canvas do gráfico ---
+                    canvas = FigureCanvasTkAgg(fig, master=frame1)
+                    atualizar_grafico()  # Exibe o gráfico inicial
+                    canvas.get_tk_widget().place(x=10, y=80)
+
+                else:
+                    tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para exibir no gráfico.")
+            except Exception as e:
+                tk.messagebox.showerror("Erro", f"Erro ao carregar dados para o gráfico: {e}")
+        
+    #-----Aba Estatistica-----
+    elif aba == "Estatistica":
+    
+        cursor = bd.banco.cursor()
+        cursor.execute("""
+            SELECT JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'Id', s_id,
+                    'Data', s_data,
+                    'Consumo de Agua', s_agua,
+                    'Nao Reciclaveis', s_reciclaveis,
+                    'Energia Eletrica', s_energia,
+                    'Tipo Transporte', s_transporte
+                )
+            ) AS dados_json
+            FROM sustentabilidade;
+        """)
+
+        resultado = cursor.fetchone()
+
+        texto_estatisticas = ctk.CTkLabel(
+            frame1,
+            text="Estatísticas média do Usuário",
+            text_color="black",
+            font=("Arial", 18)
+        )
+        texto_estatisticas.place(x=90, y=30)
+
+        if resultado and resultado[0]:
+            cursor.execute("SELECT AVG(s_agua), AVG(s_reciclaveis), AVG(s_energia), AVG(s_transporte) FROM sustentabilidade")
             resultado = cursor.fetchone()
 
-            # Verifica se há dados retornados
-            if resultado and resultado[0]:
-                dados = json.loads(resultado[0])  # Converte o JSON retornado para um objeto Python (lista de dicionários)
+            if resultado and all(v is not None for v in resultado):
+                s_agua, s_reciclaveis, s_energia, media_transporte = [round(v, 2) for v in resultado]
 
-                texto_grafico = ctk.CTkLabel(frame1, 
-                                             text="Gráfico de Sustentabilidade", 
-                                             text_color="black",
-                                             font=("Arial", 18))
-                texto_grafico.place(x=110, y=30)
+                transporte_sustentavel = round((1 - media_transporte) * 100, 2)
 
-                num_registros = len(dados)
+                pontuacao = int(round(
+                    ((s_agua * 0.2) +
+                    (s_reciclaveis * 0.3) +
+                    (s_energia * 0.3) +
+                    (transporte_sustentavel * 0.2)) / 100 * 5
+                ))
 
-                # Calcula as médias para cada categoria
-                categorias = ["Água", "Não Recicláveis", "Energia"]
-                valores = [
-                    sum(dado["Consumo de Agua"] for dado in dados) / num_registros,
-                    sum(dado["Nao Reciclaveis"] for dado in dados) / num_registros,
-                    sum(dado["Energia Eletrica"] for dado in dados) / num_registros
-                ]
+                dados = {
+                    "agua": {"valor": s_agua, "mensagem": "você precisa reduzir o consumo de água"},
+                    "nao_reciclaveis": {"valor": s_reciclaveis, "mensagem": "está OK"},
+                    "energia": {"valor": s_energia, "mensagem": "Sustentável"},
+                    "transporte": {"valor": transporte_sustentavel, "mensagem": "Considere meios mais sustentáveis"},
+                    "pontuacao": pontuacao
+                }
 
-                # Cria o gráfico de barras
-                fig, ax = plt.subplots(figsize=(4.2, 3.4))
-                ax.bar(categorias, valores, color=['blue', 'green', 'red'])
-                ax.set_ylabel("Média dos Valores")
+                criar_bloco_estatistica_agua(frame1, "ÁGUA", dados["agua"]["valor"], dados["agua"]["mensagem"], 80)
+                criar_bloco_estatistica_reciclaveis(frame1, "NÃO RECICLÁVEIS", dados["nao_reciclaveis"]["valor"], dados["nao_reciclaveis"]["mensagem"], 120)
+                criar_bloco_estatistica_energia(frame1, "ENERGIA ELÉTRICA", dados["energia"]["valor"], dados["energia"]["mensagem"], 160)
+                criar_bloco_estatistica_transporte(frame1, "TRANSPORTE", dados["transporte"]["valor"], dados["transporte"]["mensagem"], 200)
 
-                # Insere o gráfico no frame
-                canvas = FigureCanvasTkAgg(fig, master=frame1)
-                canvas.draw()
-                canvas.get_tk_widget().place(x=10, y=75)
+                texto_estatisticasPontuacao = ctk.CTkLabel(
+                    frame1, text="ESTRELAS", text_color="black", font=("Arial", 12)
+                )
+                texto_estatisticasPontuacao.place(x=180, y=260)
+
+                puxar_estatisticasPontuacao = ctk.CTkEntry(
+                    frame1,
+                    corner_radius=50,
+                    border_color="gold",
+                    placeholder_text=str(dados["pontuacao"]),
+                    width=70
+                )
+                puxar_estatisticasPontuacao.configure(state="readonly")
+                puxar_estatisticasPontuacao.place(x=100, y=260)
+
             else:
-                tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para exibir no gráfico.")
-        except Exception as e:
-            tk.messagebox.showerror("Erro", f"Erro ao carregar dados para o gráfico: {e}")
-        
-    #-----Aba Graficos-----
-    elif aba == "Estatistica":
-        
-        texto_TituloEstatisticas = ctk.CTkLabel(frame1, 
-                     text="Estatísticas do Usuário", 
-                     text_color="black",
-                     font=("Arial", 18))
-        texto_TituloEstatisticas.place(x=135, y=30)
-    
-        texto_estatisticasAgua = ctk.CTkLabel(frame1, 
-                     text="ÁGUA -> você precisa reduzir o consumo de água", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_estatisticasAgua.place(x=75, y=80)
-        
-        puxar_estatisticasAgua = ctk.CTkEntry(frame1, 
-                                    corner_radius=50,
-                                    border_color="Grey",
-                                    placeholder_text="40%",
-                                    width=60)
-        puxar_estatisticasAgua.configure(state="readonly")
-        puxar_estatisticasAgua.place(x=10, y=80)
-        
-        texto_estatisticasNaoReciclaveis = ctk.CTkLabel(frame1, 
-                     text="NÃO RECICLÁVEIS -> está OK", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_estatisticasNaoReciclaveis.place(x=75, y=120)
-        
-        puxar_estatisticasNaoReciclaveis = ctk.CTkEntry(frame1, 
-                                    corner_radius=50,
-                                    border_color="Grey",
-                                    placeholder_text="55%",
-                                    width=60)
-        puxar_estatisticasNaoReciclaveis.configure(state="readonly")
-        puxar_estatisticasNaoReciclaveis.place(x=10, y=120)
+                tk.messagebox.showinfo("Estatísticas", "Não foi possível calcular as médias.")
+        else:
+            tk.messagebox.showinfo("Estatísticas", "Nenhum dado encontrado no banco de dados.")
 
-        texto_estatisticasEnergia = ctk.CTkLabel(frame1, 
-                     text="ENERGIA ELÉTRICA -> Sustentável", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_estatisticasEnergia.place(x=75, y=160)
-        
-        puxar_estatisticasEnergia = ctk.CTkEntry(frame1, 
-                                    corner_radius=50,
-                                    border_color="Grey",
-                                    placeholder_text="85%",
-                                    width=60)
-        puxar_estatisticasEnergia.configure(state="readonly")
-        puxar_estatisticasEnergia.place(x=10, y=160)
 
-        texto_estatisticasTransporte = ctk.CTkLabel(frame1, 
-                     text="TRANSPORTE -> você precisa reduzir transportes privados", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_estatisticasTransporte.place(x=75, y=200)
-        
-        puxar_estatisticasTransporte = ctk.CTkEntry(frame1, 
-                                    corner_radius=50,
-                                    border_color="Grey",
-                                    placeholder_text="35%",
-                                    width=60)
-        puxar_estatisticasTransporte.configure(state="readonly")
-        puxar_estatisticasTransporte.place(x=10, y=200)
-        
-        texto_estatisticasPontuacao = ctk.CTkLabel(frame1, 
-                     text="ESTRELAS", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_estatisticasPontuacao.place(x=170, y=260)
-        
-        puxar_estatisticasPontuacao = ctk.CTkEntry(frame1, 
-                                    corner_radius=50,
-                                    border_color="Grey",
-                                    placeholder_text="4",
-                                    width=60)
-        puxar_estatisticasPontuacao.configure(state="readonly")
-        puxar_estatisticasPontuacao.place(x=100, y=260)
 
 
 botao_adiconarRegistro = ctk.CTkButton(janela_principal,
@@ -663,7 +901,8 @@ botao_estatistica = ctk.CTkButton(janela_principal,
                                 command=lambda: mudar_aba("Estatistica"))
 botao_estatistica.place(x=460, y=320)
 
-mudar_aba("Adicionar registros")
 
-#-----Iniciar programa-----
-janela_principal.mainloop()
+
+def chamar_janela():
+    mudar_aba("Adicionar registros")
+    janela_principal.mainloop()
