@@ -500,19 +500,10 @@ def mudar_aba(aba):
             """)
             resultado = cursor.fetchone()
 
-            # Verifica se há dados retornados
             if resultado and resultado[0]:
-                dados = json.loads(resultado[0])  # Converte o JSON retornado para um objeto Python (lista de dicionários)
-
-                texto_grafico = ctk.CTkLabel(frame1, 
-                                             text="Gráfico de Sustentabilidade", 
-                                             text_color="black",
-                                             font=("Arial", 18))
-                texto_grafico.place(x=110, y=30)
-
+                dados = json.loads(resultado[0])
                 num_registros = len(dados)
 
-                # Calcula as médias para cada categoria
                 categorias = ["Água", "Não Recicláveis", "Energia"]
                 valores = [
                     sum(dado["Consumo de Agua"] for dado in dados) / num_registros,
@@ -520,19 +511,120 @@ def mudar_aba(aba):
                     sum(dado["Energia Eletrica"] for dado in dados) / num_registros
                 ]
 
-                # Cria o gráfico de barras
-                fig, ax = plt.subplots(figsize=(4.2, 3.4))
-                ax.bar(categorias, valores, color=['blue', 'green', 'red'])
-                ax.set_ylabel("Média dos Valores")
+                texto_grafico = ctk.CTkLabel(frame1,
+                                            text="Gráfico de Sustentabilidade",
+                                            text_color="black",
+                                            font=("Arial", 18))
+                texto_grafico.place(x=90, y=10)
 
-                # Insere o gráfico no frame
+                # --- Criação da figura do gráfico ---
+                fig, ax = plt.subplots(figsize=(4.0, 3.2))
+
+                # --- Função de atualização do gráfico ---
+                def atualizar_grafico(event=None):
+                        tipo = combo_tipo.get()
+
+                        # Remove o gráfico antigo do frame (caso exista)
+                        for widget in frame1.winfo_children():
+                            if isinstance(widget, FigureCanvasTkAgg):
+                                widget.get_tk_widget().destroy()
+
+                        # Define os dados de categorias (fixo para barras e pizza padrão)
+                        categorias = ["Água", "Não Recicláveis", "Energia"]
+
+                        # Dados para gráfico de barras (médias)
+                        valores_barras = [
+                            sum(dado["Consumo de Agua"] for dado in dados) / num_registros,
+                            sum(dado["Nao Reciclaveis"] for dado in dados) / num_registros,
+                            sum(dado["Energia Eletrica"] for dado in dados) / num_registros
+                        ]
+
+                        # Define tamanho do gráfico por tipo
+                        if tipo == "Médias":
+                            fig, ax = plt.subplots(figsize=(4.2, 3.2))
+
+                            # Categorias e valores originais
+                            categorias = ["Água", "Não Recicláveis", "Energia"]
+                            ax.bar(categorias, valores_barras, color=['blue', 'green', 'red'])
+                            ax.set_ylabel("Média dos Valores")
+
+                        elif tipo == "Transporte":
+                            cursor.execute("""
+                                SELECT s_transporte, COUNT(*) 
+                                FROM sustentabilidade 
+                                GROUP BY s_transporte;
+                            """)
+                            resultados = cursor.fetchall()
+
+                            labels_transporte = [linha[0] for linha in resultados]
+                            valores_transporte = [linha[1] for linha in resultados]
+
+                            fig, ax = plt.subplots(figsize=(4.0, 3.2))  # maior para caber os nomes dos transportes
+                            ax.set_position([0.1, 0.1, 0.78, 0.73])  # [esquerda, baixo, largura, altura]
+                            ax.pie(valores_transporte,
+                                labels=labels_transporte,
+                                autopct='%1.1f%%',
+                                startangle=140,
+                                radius=0.5)
+                            ax.axis('equal')
+                        elif tipo == "Máximos e Mínimos":
+                            fig, ax = plt.subplots(figsize=(4.2, 3.2))
+
+                            # Categorias
+                            categorias = ["Água", "Não Recicláveis", "Energia"]
+
+                            # Máximos e mínimos por categoria
+                            maximos = [
+                                max(dado["Consumo de Agua"] for dado in dados),
+                                max(dado["Nao Reciclaveis"] for dado in dados),
+                                max(dado["Energia Eletrica"] for dado in dados)
+                            ]
+                            minimos = [
+                                min(dado["Consumo de Agua"] for dado in dados),
+                                min(dado["Nao Reciclaveis"] for dado in dados),
+                                min(dado["Energia Eletrica"] for dado in dados)
+                            ]
+
+                            # Largura das barras
+                            largura = 0.35
+                            x = range(len(categorias))
+
+                            # Barras lado a lado
+                            ax.bar([i - largura/2 for i in x], maximos, width=largura, label="Máximo", color="red")
+                            ax.bar([i + largura/2 for i in x], minimos, width=largura, label="Mínimo", color="blue")
+
+                            ax.set_xticks(x)
+                            ax.set_xticklabels(categorias)
+                            ax.set_ylabel("Valores")
+                            ax.set_title("Máximos e Mínimos por Categoria")
+                            ax.legend()
+
+                        # Insere o novo gráfico
+                        canvas = FigureCanvasTkAgg(fig, master=frame1)
+                        canvas.draw()
+                        canvas.get_tk_widget().place(x=10, y=70)
+
+
+                # --- Combobox customtkinter ---
+                combo_tipo = ctk.CTkComboBox(frame1,
+                values=["Médias", "Máximos e Mínimos", "Transporte"],
+                command=atualizar_grafico,
+                width=160,
+                dropdown_font=("Arial", 12),
+                font=("Arial", 12))
+                combo_tipo.set("Médias")
+                combo_tipo.place(x=110, y=40)
+
+                # --- Canvas do gráfico ---
                 canvas = FigureCanvasTkAgg(fig, master=frame1)
-                canvas.draw()
-                canvas.get_tk_widget().place(x=10, y=55)
+                atualizar_grafico()  # Exibe o gráfico inicial
+                canvas.get_tk_widget().place(x=10, y=80)
+
             else:
                 tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para exibir no gráfico.")
         except Exception as e:
             tk.messagebox.showerror("Erro", f"Erro ao carregar dados para o gráfico: {e}")
+
         
     #-----Aba Estatistica-----
     elif aba == "Estatistica":
