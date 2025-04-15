@@ -8,7 +8,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from datetime import date
 import bd
 
-ctk.set_appearance_mode("Dark")
+ctk.set_appearance_mode("Light")
 
 altura = 400
 largura = 400
@@ -269,7 +269,7 @@ def mudar_aba(aba):
     
                 
         #Função pegar valor, ler BD (atualmente .json) e depois retornar consulta
-        def Consulta(entradaId):
+        def ConsultaPorId(entradaId):
             try:
                 entrada_idInt = int(entrada_id.get())  # Obtém o ID inserido pelo usuário
                 cursor = bd.banco.cursor()
@@ -312,6 +312,48 @@ def mudar_aba(aba):
             except Exception as e:
                 tk.messagebox.showerror("Erro", f"Erro ao consultar dados: {e}")
         
+        def ConsultaPorData(entradaData):
+            print(entradaData)
+            try:
+                entrada_data = entradaData.get()  # Obtém a data inserida pelo usuário
+                cursor = bd.banco.cursor()
+                
+                # Consulta ao banco de dados para obter os dados no formato JSON
+                cursor.execute(f"""
+                    SELECT JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'Id', s_id,
+                            'Data', s_data,
+                            'Consumo de Agua', s_agua,
+                            'Nao Reciclaveis', s_reciclaveis,
+                            'Energia Eletrica', s_energia,
+                            'Tipo Transporte', s_transporte
+                        )
+                    ) AS dados_json
+                    FROM sustentabilidade
+                    WHERE s_data = '{entrada_data}';
+                """)
+                resultado = cursor.fetchone()
+                
+                # Verifica se há dados retornados
+                if resultado and resultado[0]:
+                    dados = json.loads(resultado[0])  # Converte o JSON retornado para um objeto Python
+                    for item in tabela.get_children():
+                        tabela.delete(item)
+                    for item in dados:
+                        tabela.insert("", "end", values=(
+                            item.get("Id", ""),
+                            item.get("Consumo de Agua", ""),
+                            item.get("Nao Reciclaveis", ""),
+                            item.get("Energia Eletrica", ""),
+                            item.get("Tipo Transporte", ""),
+                            item.get("Data", "")
+                         ))
+                else:
+                    tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para a data informada.")
+            except Exception as e:
+                tk.messagebox.showerror("Erro", f"Erro ao consultar dados: {e}")
+        
         #-----Texto adicionar registro-----
         texto_addRegistros = ctk.CTkLabel(frame1, 
                      text="Consultar Registros", 
@@ -320,27 +362,44 @@ def mudar_aba(aba):
         texto_addRegistros.place(x=135, y=30)
         
         
-        #-----Texto e entrada para consultar ID-----
+        #-----Texto e entrada para consultar por ID-----
         texto_consultarID = ctk.CTkLabel(frame1, 
-                     text="Consultar por ID:", 
-                     text_color="black")
-        texto_consultarID.place(x=80, y=75)
-        
+                         text="Consultar por ID:", 
+                         text_color="black")
+        texto_consultarID.place(x=10, y=75)
         entrada_id = ctk.CTkEntry(frame1,
-                                  corner_radius=50,
-                                  width= 125,
-                                  height= 35)
-        entrada_id.place(x=183, y=72)
-        
-        #-----Botão consultar ID-----
-        botao_consultar = ctk.CTkButton(frame1, 
-                      text="Consultar", 
-                      fg_color="#474444", 
                       corner_radius=50,
-                      width= 145,
-                      height= 35,
-                      command=lambda: Consulta(entrada_id))
-        botao_consultar.place(x=135, y=115)
+                      width=125,
+                      height=35)
+        entrada_id.place(x=10, y=72)
+        botao_consultarID = ctk.CTkButton(frame1, 
+                          text="Consultar por ID", 
+                          fg_color="#474444", 
+                          corner_radius=50,
+                          width=145,
+                          height=35,
+                          command=lambda: ConsultaPorId(entrada_id))
+        botao_consultarID.place(x=10, y=115)
+
+        #-----Texto e entrada para consultar por Data-----
+        #texto_consultarData = ctk.CTkLabel(frame1, 
+         #                  text="Consultar por Data:", 
+                     #      text_color="black")
+        #texto_consultarData.place(x=80, y=115)
+        entrada_data_fg = ctk.CTkEntry(frame1,
+                        corner_radius=50,
+                        width=125,
+                        height=35)
+        entrada_data_fg.place(x=200, y=72)
+        botao_consultarData = ctk.CTkButton(frame1, 
+                            text="Consultar por Data", 
+                            fg_color="#474444", 
+                            corner_radius=50,
+                            width=145,
+                            height=35,
+                            command=lambda: ConsultaPorData(entrada_data_fg))
+        botao_consultarData.place(x=200, y=115)
+
 
         #-----Criar um frame interno para a tabela-----
         tabela_frame = ctk.CTkFrame(frame1,
@@ -583,8 +642,8 @@ def mudar_aba(aba):
         tabela.column("Água (L)", width=59, anchor="center")
         tabela.column("Resíduos", width=59, anchor="center")
         tabela.column("Energia", width=59, anchor="center")
-        tabela.column("Transporte", width=110, anchor="center")
-        tabela.column("Data", width=70, anchor="center")
+        tabela.column("Transporte", width=80, anchor="center")
+        tabela.column("Data", width=120, anchor="center")
 
         # Definir cabeçalhos das colunas
         for col in colunas:
