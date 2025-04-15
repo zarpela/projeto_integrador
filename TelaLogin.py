@@ -2,7 +2,7 @@ import customtkinter as ctk
 import SistemaComBD
 
 # --- Configuração inicial ---
-ctk.set_appearance_mode("Dark")
+ctk.set_appearance_mode("Light")
 
 janela = ctk.CTk()
 janela.title("Sistema de Sustentabilidade")
