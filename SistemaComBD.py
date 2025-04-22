@@ -8,7 +8,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from datetime import date
 import bd
 
-ctk.set_appearance_mode("Light")
+ctk.set_appearance_mode("Dark")
 
 altura = 400
 largura = 400
@@ -16,7 +16,8 @@ largura = 400
 janela_principal = ctk.CTk()
 janela_principal.title("Sistema de Sustentabilidade")
 janela_principal.geometry("650x400")
-    
+janela_principal.resizable(False, False)
+
 #-----Frames da Janela Principal-----
 frame1 = ctk.CTkFrame(master=janela_principal,
                           width=altura, 
@@ -32,8 +33,7 @@ frame2 = ctk.CTkFrame(janela_principal,
                           bg_color="#cccccc")
 frame2.place(x=400, y=0)
 
-
-#----Atribuir cores nas estatísticas----- *RETIRAR O QUANTO ANTES*
+#----Atribuir cores nas estatísticas-----
 def criar_bloco_estatistica_agua(master, titulo, valor, mensagem, y_pos):
         cor = "green" if valor >= 0 and valor <=100 else "yellow" if valor > 100 and valor <= 150 else "red"
 
@@ -101,12 +101,6 @@ def criar_bloco_estatistica_transporte(master, titulo, valor, mensagem, y_pos):
                             width=75)
         entrada.configure(state="readonly")
         entrada.place(x=15, y=y_pos) 
-        
-#---- *RETIRAR O QUANTO ANTES* ----- 
-    
-    
-    
-    
     
 #-----Mudar Abas-----
 def mudar_aba(aba):
@@ -114,8 +108,14 @@ def mudar_aba(aba):
         widget.destroy()
     
     #-----Aba Adicionar Registros-----
-    if aba == "Adicionar registros":
+    if aba == "Adicionar Registros":
 
+        botao_adiconarRegistro.configure(fg_color="#363434")
+        botao_registros.configure(fg_color="#686564")
+        botao_acoes.configure(fg_color="#686564")
+        botao_graficos.configure(fg_color="#686564")
+        botao_estatistica.configure(fg_color="#686564")
+        
         texto_addRegistros = ctk.CTkLabel(frame1, 
                      text="Adicionar Registros", 
                      text_color="black",
@@ -227,6 +227,12 @@ def mudar_aba(aba):
     #-----Aba "Consultar"-----
     elif aba == "Consultar":
         
+        botao_adiconarRegistro.configure(fg_color="#686564")
+        botao_registros.configure(fg_color="#363434")
+        botao_acoes.configure(fg_color="#686564")
+        botao_graficos.configure(fg_color="#686564")
+        botao_estatistica.configure(fg_color="#686564")
+        
         # Função para carregar os dados do JSON
         def carregar_dados():
             try:
@@ -269,7 +275,7 @@ def mudar_aba(aba):
     
                 
         #Função pegar valor, ler BD (atualmente .json) e depois retornar consulta
-        def ConsultaPorId(entradaId):
+        def Consulta(entradaId):
             try:
                 entrada_idInt = int(entrada_id.get())  # Obtém o ID inserido pelo usuário
                 cursor = bd.banco.cursor()
@@ -312,48 +318,6 @@ def mudar_aba(aba):
             except Exception as e:
                 tk.messagebox.showerror("Erro", f"Erro ao consultar dados: {e}")
         
-        def ConsultaPorData(entradaData):
-            print(entradaData)
-            try:
-                entrada_data = entradaData.get()  # Obtém a data inserida pelo usuário
-                cursor = bd.banco.cursor()
-                
-                # Consulta ao banco de dados para obter os dados no formato JSON
-                cursor.execute(f"""
-                    SELECT JSON_ARRAYAGG(
-                        JSON_OBJECT(
-                            'Id', s_id,
-                            'Data', s_data,
-                            'Consumo de Agua', s_agua,
-                            'Nao Reciclaveis', s_reciclaveis,
-                            'Energia Eletrica', s_energia,
-                            'Tipo Transporte', s_transporte
-                        )
-                    ) AS dados_json
-                    FROM sustentabilidade
-                    WHERE s_data = '{entrada_data}';
-                """)
-                resultado = cursor.fetchone()
-                
-                # Verifica se há dados retornados
-                if resultado and resultado[0]:
-                    dados = json.loads(resultado[0])  # Converte o JSON retornado para um objeto Python
-                    for item in tabela.get_children():
-                        tabela.delete(item)
-                    for item in dados:
-                        tabela.insert("", "end", values=(
-                            item.get("Id", ""),
-                            item.get("Consumo de Agua", ""),
-                            item.get("Nao Reciclaveis", ""),
-                            item.get("Energia Eletrica", ""),
-                            item.get("Tipo Transporte", ""),
-                            item.get("Data", "")
-                         ))
-                else:
-                    tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para a data informada.")
-            except Exception as e:
-                tk.messagebox.showerror("Erro", f"Erro ao consultar dados: {e}")
-        
         #-----Texto adicionar registro-----
         texto_addRegistros = ctk.CTkLabel(frame1, 
                      text="Consultar Registros", 
@@ -362,44 +326,27 @@ def mudar_aba(aba):
         texto_addRegistros.place(x=135, y=30)
         
         
-        #-----Texto e entrada para consultar por ID-----
+        #-----Texto e entrada para consultar ID-----
         texto_consultarID = ctk.CTkLabel(frame1, 
-                         text="Consultar por ID:", 
-                         text_color="black")
-        texto_consultarID.place(x=10, y=75)
+                     text="Consultar por ID:", 
+                     text_color="black")
+        texto_consultarID.place(x=80, y=75)
+        
         entrada_id = ctk.CTkEntry(frame1,
+                                  corner_radius=50,
+                                  width= 125,
+                                  height= 35)
+        entrada_id.place(x=183, y=72)
+        
+        #-----Botão consultar ID-----
+        botao_consultar = ctk.CTkButton(frame1, 
+                      text="Consultar", 
+                      fg_color="#474444", 
                       corner_radius=50,
-                      width=125,
-                      height=35)
-        entrada_id.place(x=10, y=72)
-        botao_consultarID = ctk.CTkButton(frame1, 
-                          text="Consultar por ID", 
-                          fg_color="#474444", 
-                          corner_radius=50,
-                          width=145,
-                          height=35,
-                          command=lambda: ConsultaPorId(entrada_id))
-        botao_consultarID.place(x=10, y=115)
-
-        #-----Texto e entrada para consultar por Data-----
-        #texto_consultarData = ctk.CTkLabel(frame1, 
-         #                  text="Consultar por Data:", 
-                     #      text_color="black")
-        #texto_consultarData.place(x=80, y=115)
-        entrada_data_fg = ctk.CTkEntry(frame1,
-                        corner_radius=50,
-                        width=125,
-                        height=35)
-        entrada_data_fg.place(x=200, y=72)
-        botao_consultarData = ctk.CTkButton(frame1, 
-                            text="Consultar por Data", 
-                            fg_color="#474444", 
-                            corner_radius=50,
-                            width=145,
-                            height=35,
-                            command=lambda: ConsultaPorData(entrada_data_fg))
-        botao_consultarData.place(x=200, y=115)
-
+                      width= 145,
+                      height= 35,
+                      command=lambda: Consulta(entrada_id))
+        botao_consultar.place(x=135, y=115)
 
         #-----Criar um frame interno para a tabela-----
         tabela_frame = ctk.CTkFrame(frame1,
@@ -457,7 +404,13 @@ def mudar_aba(aba):
         
         
     #-----Aba Ações-----
-    elif aba == "Acoes":
+    elif aba == "Editar Registros":
+        
+        botao_adiconarRegistro.configure(fg_color="#686564")
+        botao_registros.configure(fg_color="#686564")
+        botao_acoes.configure(fg_color="#363434")
+        botao_graficos.configure(fg_color="#686564")
+        botao_estatistica.configure(fg_color="#686564")
         
         #Função Editar
         def Editar():
@@ -475,7 +428,7 @@ def mudar_aba(aba):
                 # Cria uma nova janela para edição
                 
                 janela_editar = ctk.CTkToplevel()
-                janela_editar.title("Editar Registro")
+                janela_editar.title("Editar Registros")
                 janela_editar.geometry("350x400")
 
                 # Dados disponíveis para o ComboBox de transporte
@@ -642,8 +595,8 @@ def mudar_aba(aba):
         tabela.column("Água (L)", width=59, anchor="center")
         tabela.column("Resíduos", width=59, anchor="center")
         tabela.column("Energia", width=59, anchor="center")
-        tabela.column("Transporte", width=80, anchor="center")
-        tabela.column("Data", width=120, anchor="center")
+        tabela.column("Transporte", width=110, anchor="center")
+        tabela.column("Data", width=70, anchor="center")
 
         # Definir cabeçalhos das colunas
         for col in colunas:
@@ -681,7 +634,14 @@ def mudar_aba(aba):
     
     #-----Aba Graficos-----
     elif aba == "Grafico":
-            try:
+        
+        botao_adiconarRegistro.configure(fg_color="#686564")
+        botao_registros.configure(fg_color="#686564")
+        botao_acoes.configure(fg_color="#686564")
+        botao_graficos.configure(fg_color="#363434")
+        botao_estatistica.configure(fg_color="#686564")
+        
+        try:
                 cursor = bd.banco.cursor()
                 cursor.execute("""
                     SELECT JSON_ARRAYAGG(
@@ -710,7 +670,7 @@ def mudar_aba(aba):
                                                 text="Gráfico de Sustentabilidade",
                                                 text_color="black",
                                                 font=("Arial", 18))
-                    texto_grafico.place(x=90, y=10)
+                    texto_grafico.place(x=95, y=15)
 
                     # --- Criação da figura do gráfico ---
                     fig, ax = plt.subplots(figsize=(4.0, 3.2))
@@ -741,6 +701,7 @@ def mudar_aba(aba):
                                 # Categorias e valores originais
                                 categorias = ["Água", "Não Recicláveis", "Energia"]
                                 ax.bar(categorias, valores_barras, color=['blue', 'green', 'red'])
+                                ax.set_title("Médias das Categorias")
                                 ax.set_ylabel("Média dos Valores")
 
                             elif tipo == "Transporte":
@@ -797,7 +758,7 @@ def mudar_aba(aba):
                             # Insere o novo gráfico
                             canvas = FigureCanvasTkAgg(fig, master=frame1)
                             canvas.draw()
-                            canvas.get_tk_widget().place(x=10, y=70)
+                            canvas.get_tk_widget().place(x=8, y=85)
 
 
                     # --- Combobox customtkinter ---
@@ -808,20 +769,26 @@ def mudar_aba(aba):
                     dropdown_font=("Arial", 12),
                     font=("Arial", 12))
                     combo_tipo.set("Médias")
-                    combo_tipo.place(x=110, y=40)
+                    combo_tipo.place(x=117, y=50)
 
                     # --- Canvas do gráfico ---
                     canvas = FigureCanvasTkAgg(fig, master=frame1)
                     atualizar_grafico()  # Exibe o gráfico inicial
-                    canvas.get_tk_widget().place(x=10, y=80)
+                    canvas.get_tk_widget().place(x=40, y=80)
 
                 else:
                     tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para exibir no gráfico.")
-            except Exception as e:
+        except Exception as e:
                 tk.messagebox.showerror("Erro", f"Erro ao carregar dados para o gráfico: {e}")
         
     #-----Aba Estatistica-----
     elif aba == "Estatistica":
+    
+        botao_adiconarRegistro.configure(fg_color="#686564")
+        botao_registros.configure(fg_color="#686564")
+        botao_acoes.configure(fg_color="#686564")
+        botao_graficos.configure(fg_color="#686564")
+        botao_estatistica.configure(fg_color="#363434")
     
         cursor = bd.banco.cursor()
         cursor.execute("""
@@ -909,7 +876,7 @@ botao_adiconarRegistro = ctk.CTkButton(janela_principal,
                                 hover_color="#363434",
                                 width= 145,
                                 height= 35,
-                                command=lambda: mudar_aba("Adicionar registros"))
+                                command=lambda: mudar_aba("Adicionar Registros"))
 botao_adiconarRegistro.place(x=460, y=60)
     
 botao_registros = ctk.CTkButton(janela_principal,
@@ -922,10 +889,10 @@ botao_registros = ctk.CTkButton(janela_principal,
                                 width= 145,
                                 height= 35,
                                 command=lambda: mudar_aba("Consultar"))
-botao_registros.place(x=460, y=125)
+botao_registros.place(x=460, y=120)
     
 botao_acoes = ctk.CTkButton(janela_principal,
-                                text="Ações",
+                                text="Editar Registros",
                                 text_color="white",
                                 fg_color="#686564",
                                 corner_radius=50,
@@ -933,8 +900,8 @@ botao_acoes = ctk.CTkButton(janela_principal,
                                 hover_color="#363434",
                                 width= 145,
                                 height= 35,
-                                command=lambda: mudar_aba("Acoes"))
-botao_acoes.place(x=460, y=190)
+                                command=lambda: mudar_aba("Editar Registros"))
+botao_acoes.place(x=460, y=180)
     
 botao_graficos = ctk.CTkButton(janela_principal,
                                 text="Gráfico",
@@ -946,7 +913,7 @@ botao_graficos = ctk.CTkButton(janela_principal,
                                 width= 145,
                                 height= 35,
                                 command=lambda: mudar_aba("Grafico"))
-botao_graficos.place(x=460, y=255)
+botao_graficos.place(x=460, y=240)
     
 botao_estatistica = ctk.CTkButton(janela_principal,
                                 text="Estatística",
@@ -958,10 +925,8 @@ botao_estatistica = ctk.CTkButton(janela_principal,
                                 width= 145,
                                 height= 35,
                                 command=lambda: mudar_aba("Estatistica"))
-botao_estatistica.place(x=460, y=320)
-
-
+botao_estatistica.place(x=460, y=300)
 
 def chamar_janela():
-    mudar_aba("Adicionar registros")
+    mudar_aba("Adicionar Registros")
     janela_principal.mainloop()
