@@ -18,6 +18,7 @@ janela_principal.title("Sistema de Sustentabilidade")
 janela_principal.geometry("650x400")
 janela_principal.resizable(False, False)
 
+
 #-----Frames da Janela Principal-----
 frame1 = ctk.CTkFrame(master=janela_principal,
                           width=altura, 
@@ -32,6 +33,8 @@ frame2 = ctk.CTkFrame(janela_principal,
                           fg_color="#cccccc", 
                           bg_color="#cccccc")
 frame2.place(x=400, y=0)
+
+
 
 #----Atribuir cores nas estatísticas-----
 def criar_bloco_estatistica_agua(master, titulo, valor, mensagem, y_pos):
@@ -934,6 +937,7 @@ rodape = ctk.CTkLabel(janela_principal,
                       text_color="black",
                       bg_color="#cccccc")
 rodape.place(x=445, y=360)
+
 
 def chamar_janela():
     mudar_aba("Adicionar Registros")
