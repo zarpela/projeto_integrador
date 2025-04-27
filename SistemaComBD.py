@@ -927,6 +927,14 @@ botao_estatistica = ctk.CTkButton(janela_principal,
                                 command=lambda: mudar_aba("Estatistica"))
 botao_estatistica.place(x=460, y=300)
 
+# --- Rodapé ---
+rodape = ctk.CTkLabel(janela_principal,
+                      text="Sistema de Sustentabilidade 2025 ",
+                      font=ctk.CTkFont(size=11, slant="italic"),
+                      text_color="black",
+                      bg_color="#cccccc")
+rodape.place(x=445, y=360)
+
 def chamar_janela():
     mudar_aba("Adicionar Registros")
     janela_principal.mainloop()

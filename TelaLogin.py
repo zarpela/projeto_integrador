@@ -102,7 +102,7 @@ botao_cadastro = ctk.CTkButton(frame_abas, text="Cadastrar", width=100, command=
 botao_cadastro.grid(row=0, column=1, padx=10, pady=10)
 
 # --- Rodapé ---
-rodape = ctk.CTkLabel(janela, text="2025 Sistema de Sustentabilidade", font=ctk.CTkFont(size=11, slant="italic"), text_color="white")
+rodape = ctk.CTkLabel(janela, text="Sistema de Sustentabilidade 2025 ", font=ctk.CTkFont(size=11, slant="italic"), text_color="white")
 rodape.pack(side="bottom", pady=10)
 
 # --- Inicia com login ---
