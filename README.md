@@ -6,7 +6,7 @@
     <li>Marcelo Zarpelon - BD e backend, parte da documentação, parte do design no Canva e o trello</li>
     <li>Guilherme Henrique Moreira - parte da documentação, parte do design no canva e parte do front-end</li>
     <li>Rafael Henrique Inácio dos Santos - parte de documentacao, parte no desenvolvimento do trello e participacao no front-end</li> 
-    <li>Murillo Iamarino Caravita - a adicionar</li> 
+    <li>Murillo Iamarino Caravita - Parte Gráfica (FrontEnd), conectividade com as tabelas, as tabelas, Tela de Login e Sistema de Login, Consultas.
  </ul>
  
 ### Documentação:
