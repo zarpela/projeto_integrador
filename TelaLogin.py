@@ -2,6 +2,8 @@ import customtkinter as ctk
 import SistemaComBD
 import bd
 
+bd = bd.banco.cursor()
+
 # --- Configuração inicial ---
 ctk.set_appearance_mode("Dark")
 
