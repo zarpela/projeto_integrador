@@ -329,7 +329,7 @@ def mudar_aba(aba):
                             item.get("Data", "")
                          ))
                 else:
-                    tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para o ID informado.")
+                    tk.messagebox.showinfo("Aviso", "Nenhum dado encontrado para o ID ou Data informada.")
             except ValueError:
                 tk.messagebox.showinfo("Erro", "Por favor, insira um número válido.")
             except Exception as e:
