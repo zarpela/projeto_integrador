@@ -5,7 +5,7 @@ import json
 from PIL import Image
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from datetime import date
+import datetime
 import bd
 
 ctk.set_appearance_mode("Dark")
@@ -17,7 +17,6 @@ janela_principal = ctk.CTk()
 janela_principal.title("Sistema de Sustentabilidade")
 janela_principal.geometry("650x400")
 janela_principal.resizable(False, False)
-
 
 #-----Frames da Janela Principal-----
 frame1 = ctk.CTkFrame(master=janela_principal,
@@ -33,8 +32,6 @@ frame2 = ctk.CTkFrame(janela_principal,
                           fg_color="#cccccc", 
                           bg_color="#cccccc")
 frame2.place(x=400, y=0)
-
-
 
 #----Atribuir cores nas estatísticas-----
 def criar_bloco_estatistica_agua(master, titulo, valor, mensagem, y_pos):
@@ -55,7 +52,7 @@ def criar_bloco_estatistica_agua(master, titulo, valor, mensagem, y_pos):
         entrada.place(x=15, y=y_pos) 
         
 def criar_bloco_estatistica_reciclaveis(master, titulo, valor, mensagem, y_pos):
-        cor = "green" if valor >= 0 and valor < 0.95 else "yellow" if valor >= 0.95 and valor <= 1.25 else "red"
+        cor = "green" if valor >= 0.5 and valor < 0.95 else "yellow" if valor >= 0.95 and valor <= 1.25 else "red"
 
         texto = ctk.CTkLabel(master, 
                             text=f"{titulo.upper()} -> {mensagem}", 
@@ -72,7 +69,7 @@ def criar_bloco_estatistica_reciclaveis(master, titulo, valor, mensagem, y_pos):
         entrada.place(x=15, y=y_pos) 
 
 def criar_bloco_estatistica_energia(master, titulo, valor, mensagem, y_pos):
-        cor = "green" if valor >= 0 and valor <= 4.5 else "yellow" if valor > 4.5 and valor <= 6 else "red"
+        cor = "green" if valor >= 2.5 and valor <= 4.5 else "yellow" if valor > 4.5 and valor <= 6 else "red"
 
         texto = ctk.CTkLabel(master, 
                             text=f"{titulo.upper()} -> {mensagem}", 
@@ -89,7 +86,7 @@ def criar_bloco_estatistica_energia(master, titulo, valor, mensagem, y_pos):
         entrada.place(x=15, y=y_pos) 
 
 def criar_bloco_estatistica_transporte(master, titulo, valor, mensagem, y_pos):
-        cor = "green" if valor >=0 and valor<=0.25 else "yellow" if valor >0.25 and valor <=0.75 else "red"
+        cor = "green" if valor == 0  else "yellow" if valor >=0.25 and valor <= 0.5 else "red"
 
         texto = ctk.CTkLabel(master, 
                             text=f"{titulo.upper()} -> {mensagem}", 
@@ -107,7 +104,6 @@ def criar_bloco_estatistica_transporte(master, titulo, valor, mensagem, y_pos):
     
 #-----Mudar Abas-----
 def mudar_aba(aba):
-    global botao_OqueFazer
     for widget in frame1.winfo_children():
         widget.destroy()
     
@@ -207,7 +203,7 @@ def mudar_aba(aba):
                     dados = (
                         int(1),
                         #data em formato YYYY-MM-DD
-                        date.today().strftime("%Y-%m-%d"),
+                        datetime.date.today().strftime("%Y-%m-%d"),
                         float(add_agua),
                         float(add_residuos),
                         float(add_energia),
@@ -281,9 +277,24 @@ def mudar_aba(aba):
         #Função pegar valor, ler BD (atualmente .json) e depois retornar consulta
         def Consulta(entradaId):
             try:
-                entrada_idInt = int(entrada_id.get())  # Obtém o ID inserido pelo usuário
-                cursor = bd.banco.cursor()
+                entrada_valor = entrada_id.get()  # Obtém o valor inserido pelo usuário
+        
+                try:
+                    # Primeiro tenta converter para inteiro
+                    entrada_idInt = int(entrada_valor)
+                    consulta_sql = f"WHERE s_id = {entrada_idInt}"
                 
+                except ValueError:
+                    try:
+                        # Se não for int, tenta converter para data
+                        entrada_data = datetime.datetime.strptime(entrada_valor, "%Y-%m-%d").date()
+                        consulta_sql = f"WHERE s_data = '{entrada_data}'"
+                    
+                    except ValueError:
+                        tk.messagebox.showinfo("Erro", "Por favor, insira um número (ID) ou uma data no formato AAAA-MM-DD.")
+                        return
+                
+                cursor = bd.banco.cursor()
                 # Consulta ao banco de dados para obter os dados no formato JSON
                 cursor.execute(f"""
                     SELECT JSON_ARRAYAGG(
@@ -297,8 +308,7 @@ def mudar_aba(aba):
                         )
                     ) AS dados_json
                     FROM sustentabilidade
-                    WHERE s_id = {entrada_idInt};
-                """)
+                    {consulta_sql};""")
                 resultado = cursor.fetchone()
                 
                 # Verifica se há dados retornados
@@ -787,6 +797,7 @@ def mudar_aba(aba):
         
     #-----Aba Estatistica-----
     elif aba == "Estatistica":
+    
         botao_adiconarRegistro.configure(fg_color="#686564")
         botao_registros.configure(fg_color="#686564")
         botao_acoes.configure(fg_color="#686564")
@@ -817,126 +828,29 @@ def mudar_aba(aba):
             font=("Arial", 18)
         )
         texto_estatisticas.place(x=90, y=30)
-        
-        valor_transporte = {
-            "Transporte Público": 1,
-            "Bicicleta": 1,
-            "Caminhada": 1,
-            "Carona": 0.75,
-            "Carro Particular": 0.25,
-            "Moto Particular": 0
-        }
+
         if resultado and resultado[0]:
-            cursor.execute("SELECT s_transporte FROM sustentabilidade")
-            transportes = cursor.fetchall() 
-            
-            soma_transporte = 0
-            quantidade_transportes = 0
-            max_agua = 150
-            max_energia = 6
-            max_reciclaveis = 1.25
-
-            for transporte in transportes:
-                tipo_transporte = transporte[0] 
-                if tipo_transporte in valor_transporte:
-                    soma_transporte += valor_transporte[tipo_transporte]  
-                    quantidade_transportes += 1  
-         
-            if quantidade_transportes > 0:
-                media_transporte = round(soma_transporte / quantidade_transportes, 2)
-            else:
-                media_transporte = 0 
-            cursor.execute("SELECT s_agua, s_reciclaveis, s_energia FROM sustentabilidade")
-            dados = cursor.fetchall()
-
-            agua_values = [d[0] for d in dados if d[0] is not None]
-            reciclaveis_values = [d[1] for d in dados if d[1] is not None]
-            energia_values = [d[2] for d in dados if d[2] is not None]
-
-            min_agua, max_agua = min(agua_values), max(agua_values)
-            min_reciclaveis, max_reciclaveis = min(reciclaveis_values), max(reciclaveis_values)
-            min_energia, max_energia = min(energia_values), max(energia_values)
-
-            transporte_sustentavel = round((1 - media_transporte), 2)
-            cursor.execute("SELECT AVG(s_agua), AVG(s_reciclaveis), AVG(s_energia) FROM sustentabilidade")
+            cursor.execute("SELECT AVG(s_agua), AVG(s_reciclaveis), AVG(s_energia), AVG(s_transporte) FROM sustentabilidade")
             resultado = cursor.fetchone()
 
             if resultado and all(v is not None for v in resultado):
-                s_agua, s_reciclaveis, s_energia = [round(v, 2) for v in resultado]
-                s_agua_normalizado = (s_agua - min_agua) / (max_agua - min_agua) if max_agua > min_agua else 0
-                s_reciclaveis_normalizado = (s_reciclaveis - min_reciclaveis) / (max_reciclaveis - min_reciclaveis) if max_reciclaveis > min_reciclaveis else 0
-                s_energia_normalizado = (s_energia - min_energia) / (max_energia - min_energia) if max_energia > min_energia else 0
+                s_agua, s_reciclaveis, s_energia, media_transporte = [round(v, 2) for v in resultado]
 
-                transporte_sustentavel = round((1 - media_transporte), 2)
+                transporte_sustentavel = round((1 - media_transporte) * 100, 2)
 
-                pontuacao = float(round(
-                    ((s_agua_normalizado * 0.2) +
-                    (s_reciclaveis_normalizado * 0.3) +
-                    (s_energia_normalizado * 0.3) +
-                    (transporte_sustentavel * 0.2)),2
+                pontuacao = int(round(
+                    ((s_agua * 0.2) +
+                    (s_reciclaveis * 0.3) +
+                    (s_energia * 0.3) +
+                    (transporte_sustentavel * 0.2)) / 100 * 5
                 ))
 
-                if pontuacao >=0 and pontuacao <0.2:
-                    estrelas = 5
-                elif pontuacao >=0.2 and pontuacao <0.4:
-                    estrelas = 4
-                elif pontuacao >=0.4 and pontuacao <0.6:
-                    estrelas = 3
-                elif pontuacao >=0.6 and pontuacao <0.8:
-                    estrelas = 2
-                else:   
-                    estrelas = 1
-                
-                 # ---------------- ÁGUA ----------------
-                if s_agua >= 0 and s_agua <= 100:
-                    mensagemA = "Sustentável, Parábens"
-                    mensagemPopUpA = "Você está sustentável no consumo de água!"
-                elif s_agua > 100 and s_agua <= 150:
-                    mensagemA = "Pouco Sustentável"
-                    mensagemPopUpA = "Feche a torneira, tome banhos curtos e reutilize sempre que possível. Cada gota economizada faz a diferença!"
-                else:
-                    mensagemA = "Insustentável"
-                    mensagemPopUpA = "O consumo irresponsável hoje gera escassez amanhã. Crie planilhas para gerenciar formas de sustentabilizar seu consumo de água!"
-
-                # ---------------- RECICLÁVEIS ----------------
-                if s_reciclaveis >= 0 and s_reciclaveis < 0.95:
-                    mensagemR = "Sustentável, Parábens"
-                    mensagemPopUpR = "Você está sustentável com poucos itens não recicláveis! Continue assim!"
-                elif s_reciclaveis >= 0.95 and s_reciclaveis <= 1.25:
-                    mensagemR = "Pouco Sustentável"
-                    mensagemPopUpR = "Você ainda gera uma quantidade considerável de resíduos. Busque reduzir, reutilizar e reciclar!"
-                else:
-                    mensagemR = "Insustentável"
-                    mensagemPopUpR = "Produção elevada de resíduos não recicláveis! Reavalie seus hábitos e prefira materiais recicláveis."
-
-                # ---------------- ENERGIA ----------------
-                if s_energia >= 0 and s_energia <= 4.5:
-                    mensagemE = "Sustentável, Parábens"
-                    mensagemPopUpE = "Seu consumo de energia está em um ótimo nível! Continue adotando práticas conscientes!"
-                elif s_energia > 4.5 and s_energia <= 6:
-                    mensagemE = "Pouco Sustentável"
-                    mensagemPopUpE = "Seu consumo de energia pode ser melhorado! Desligue aparelhos em standby e use energia natural!"
-                else:
-                    mensagemE = "Insustentável"
-                    mensagemPopUpE = "Alto consumo de energia detectado! Tente adotar lâmpadas LED e reduzir o uso de eletrônicos desnecessários."
-
-                # ---------------- TRANSPORTE ----------------
-                if transporte_sustentavel >= 0 and transporte_sustentavel <=0.25:
-                    mensagemT = "Sustentável, Parábens"
-                    mensagemPopUpT = "Você utiliza transportes sustentáveis com frequência! Ótimo para o meio ambiente e para você!"
-                elif transporte_sustentavel >0.25 and transporte_sustentavel <=0.75:
-                    mensagemT = "Pouco Sustentável"
-                    mensagemPopUpT = "Você usa meios sustentáveis às vezes, mas ainda pode melhorar! Dê preferência a bicicletas, caminhadas e transporte público."
-                else:
-                    mensagemT = "Insustentável"
-                    mensagemPopUpT = "Uso elevado de transportes poluentes! Reduza a dependência de carros particulares e adote alternativas mais verdes."
-                    
                 dados = {
-                    "agua": {"valor": s_agua, "mensagem": mensagemA},
-                    "nao_reciclaveis": {"valor": s_reciclaveis, "mensagem": mensagemR},
-                    "energia": {"valor": s_energia, "mensagem": mensagemE},
-                    "transporte": {"valor": transporte_sustentavel, "mensagem": mensagemT},
-                    "pontuacao": estrelas
+                    "agua": {"valor": s_agua, "mensagem": "você precisa reduzir o consumo de água"},
+                    "nao_reciclaveis": {"valor": s_reciclaveis, "mensagem": "está OK"},
+                    "energia": {"valor": s_energia, "mensagem": "Sustentável"},
+                    "transporte": {"valor": transporte_sustentavel, "mensagem": "Considere meios mais sustentáveis"},
+                    "pontuacao": pontuacao
                 }
 
                 criar_bloco_estatistica_agua(frame1, "ÁGUA", dados["agua"]["valor"], dados["agua"]["mensagem"], 80)
@@ -958,43 +872,13 @@ def mudar_aba(aba):
                 )
                 puxar_estatisticasPontuacao.configure(state="readonly")
                 puxar_estatisticasPontuacao.place(x=100, y=260)
-                
-                botao_OqueFazer = ctk.CTkButton(frame1,
-                                    text="Como Melhorar?",
-                                    text_color="white",
-                                    fg_color="#686564",
-                                    corner_radius=50,
-                                    bg_color="#FFFFFF",
-                                    hover_color="#363434",
-                                    width= 145,
-                                    height= 35,
-                                    command=lambda: OqueFazer(mensagemPopUpA, mensagemPopUpR, mensagemPopUpE, mensagemPopUpT))
-                botao_OqueFazer.place(x=115, y=315)
-                                
+
             else:
                 tk.messagebox.showinfo("Estatísticas", "Não foi possível calcular as médias.")
         else:
             tk.messagebox.showinfo("Estatísticas", "Nenhum dado encontrado no banco de dados.")
 
-def OqueFazer(mensagemPopUpA, mensagemPopUpR, mensagemPopUpE, mensagemPopUpT):
-    janela_OqueFazer = ctk.CTkToplevel()
-    janela_OqueFazer.title("Melhorar minha Sustentabilidade")
-    janela_OqueFazer.geometry("450x450") 
 
-    janela_OqueFazer.grab_set()
-    janela_OqueFazer.configure(bg_color="#2E2E2E")  
-
-    ctk.CTkLabel(janela_OqueFazer, text="Água:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))
-    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpA, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)
-
-    ctk.CTkLabel(janela_OqueFazer, text="Não Recicláveis:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))
-    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpR, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)
-
-    ctk.CTkLabel(janela_OqueFazer, text="Energia Elétrica:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))
-    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpE, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)
-
-    ctk.CTkLabel(janela_OqueFazer, text="Transporte:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))
-    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpT, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)
 
 
 botao_adiconarRegistro = ctk.CTkButton(janela_principal,
@@ -1064,7 +948,6 @@ rodape = ctk.CTkLabel(janela_principal,
                       text_color="black",
                       bg_color="#cccccc")
 rodape.place(x=445, y=360)
-
 
 def chamar_janela():
     mudar_aba("Adicionar Registros")
