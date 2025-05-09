@@ -34,77 +34,6 @@ frame2 = ctk.CTkFrame(janela_principal,
                           bg_color="#cccccc")
 frame2.place(x=400, y=0)
 
-
-
-#----Atribuir cores nas estatísticas-----
-def criar_bloco_estatistica_agua(master, titulo, valor, mensagem, y_pos):
-        cor = "green" if valor >= 0 and valor <=100 else "yellow" if valor > 100 and valor <= 150 else "red"
-
-        texto = ctk.CTkLabel(master, 
-                            text=f"{titulo.upper()} -> {mensagem}", 
-                            text_color="black",
-                            font=("Arial", 12))
-        texto.place(x=95, y=y_pos)
-
-        entrada = ctk.CTkEntry(master, 
-                            corner_radius=50,
-                            border_color=cor,
-                            placeholder_text=f"{valor}",
-                            width=75)
-        entrada.configure(state="readonly")
-        entrada.place(x=15, y=y_pos) 
-        
-def criar_bloco_estatistica_reciclaveis(master, titulo, valor, mensagem, y_pos):
-        cor = "green" if valor >= 0 and valor < 0.95 else "yellow" if valor >= 0.95 and valor <= 1.25 else "red"
-
-        texto = ctk.CTkLabel(master, 
-                            text=f"{titulo.upper()} -> {mensagem}", 
-                            text_color="black",
-                            font=("Arial", 12))
-        texto.place(x=95, y=y_pos)
-
-        entrada = ctk.CTkEntry(master, 
-                            corner_radius=50,
-                            border_color=cor,
-                            placeholder_text=f"{valor}",
-                            width=75)
-        entrada.configure(state="readonly")
-        entrada.place(x=15, y=y_pos) 
-
-def criar_bloco_estatistica_energia(master, titulo, valor, mensagem, y_pos):
-        cor = "green" if valor >= 0 and valor <= 4.5 else "yellow" if valor > 4.5 and valor <= 6 else "red"
-
-        texto = ctk.CTkLabel(master, 
-                            text=f"{titulo.upper()} -> {mensagem}", 
-                            text_color="black",
-                            font=("Arial", 12))
-        texto.place(x=95, y=y_pos)
-
-        entrada = ctk.CTkEntry(master, 
-                            corner_radius=50,
-                            border_color=cor,
-                            placeholder_text=f"{valor}",
-                            width=75)
-        entrada.configure(state="readonly")
-        entrada.place(x=15, y=y_pos) 
-
-def criar_bloco_estatistica_transporte(master, titulo, valor, mensagem, y_pos):
-        cor = "green" if valor >=0 and valor<=0.25 else "yellow" if valor >0.25 and valor <=0.75 else "red"
-
-        texto = ctk.CTkLabel(master, 
-                            text=f"{titulo.upper()} -> {mensagem}", 
-                            text_color="black",
-                            font=("Arial", 12))
-        texto.place(x=95, y=y_pos)
-
-        entrada = ctk.CTkEntry(master, 
-                            corner_radius=50,
-                            border_color=cor,
-                            placeholder_text=f"{valor}",
-                            width=75)
-        entrada.configure(state="readonly")
-        entrada.place(x=15, y=y_pos) 
-    
 #-----Mudar Abas-----
 def mudar_aba(aba):
     global botao_OqueFazer
@@ -178,7 +107,8 @@ def mudar_aba(aba):
                                             corner_radius= 15,
                                             justify="left",
                                             border_color="Grey",
-                                            width=200)
+                                            width=200,
+                                            state="readonly")
         entrada_tipoTransporte.place(x=110, y=280)
         
         #-----Botão adicionar registros-----
@@ -201,25 +131,28 @@ def mudar_aba(aba):
             try:
                 # Verifica se os campos estão preenchidos
                 if not add_agua or not add_residuos or not add_energia or not add_transporte:
-                    tk.messagebox.showerror("Erro", "Preencha todos os campos.")
+                    tk.messagebox.showerror("Campo(s) Inválido(s)", "Preencha todos os campos.")
                     return
                 else:
-                    dados = (
-                        int(1),
-                        #data em formato YYYY-MM-DD
-                        datetime.date.today().strftime("%Y-%m-%d"),
-                        float(add_agua),
-                        float(add_residuos),
-                        float(add_energia),
-                        add_transporte
-                    )
-                    cursor.execute("INSERT INTO sustentabilidade (su_id, s_data, s_agua, s_reciclaveis, s_energia, s_transporte) VALUES (%s, %s, %s, %s, %s, %s)", dados)
-                    bd.banco.commit()
-                    entrada_agua.delete(0, tk.END)
-                    entrada_geracaoResiduos.delete(0, tk.END)
-                    entrada_energiaGasta.delete(0, tk.END)
-                    entrada_tipoTransporte.set("")
-                    tk.messagebox.showinfo("Cadastro", "Dados cadastrados com sucesso!")
+                    if float(add_agua) <= 0 or float(add_residuos) <= 0 or float(add_energia) <= 0:
+                        tk.messagebox.showerror("Valor Inválido", "Por favor, coloque um valor positivo.")
+                    else:
+                        dados = (
+                            int(1),
+                            #data em formato YYYY-MM-DD
+                            datetime.date.today().strftime("%Y-%m-%d"),
+                            float(add_agua),
+                            float(add_residuos),
+                            float(add_energia),
+                            add_transporte
+                        )
+                        cursor.execute("INSERT INTO sustentabilidade (su_id, s_data, s_agua, s_reciclaveis, s_energia, s_transporte) VALUES (%s, %s, %s, %s, %s, %s)", dados)
+                        bd.banco.commit()
+                        entrada_agua.delete(0, tk.END)
+                        entrada_geracaoResiduos.delete(0, tk.END)
+                        entrada_energiaGasta.delete(0, tk.END)
+                        entrada_tipoTransporte.set("")
+                        tk.messagebox.showinfo("Cadastro", "Dados cadastrados com sucesso!")
             except Exception as e:
                 tk.messagebox.showerror("Erro", f"Erro ao adicionar dados: {e}")
             finally:
@@ -345,7 +278,7 @@ def mudar_aba(aba):
         
         #-----Texto e entrada para consultar ID-----
         texto_consultarID = ctk.CTkLabel(frame1, 
-                     text="Consultar por ID:", 
+                     text="Consultar por ID ou Data:", 
                      text_color="black")
         texto_consultarID.place(x=80, y=75)
         
@@ -473,33 +406,38 @@ def mudar_aba(aba):
                 entrada_energia.pack(pady=5)
 
                 ctk.CTkLabel(janela_editar, text="Tipo de Transporte:").pack(pady=3)
-                entrada_transporte = ctk.CTkComboBox(janela_editar, corner_radius=10, values=opcoes_transporte)
+                entrada_transporte = ctk.CTkComboBox(janela_editar, corner_radius=10, values=opcoes_transporte, state="readonly")
                 entrada_transporte.set(valores[4])  # Preenche com o valor atual
                 entrada_transporte.pack(pady=5)
 
                 # Função para salvar as alterações
                 def salvar_alteracoes():
                     try:
-                        novo_agua = float(entrada_agua.get())
-                        novo_residuos = float(entrada_residuos.get())
-                        novo_energia = float(entrada_energia.get())
-                        novo_transporte = entrada_transporte.get()
+                            novo_agua = float(entrada_agua.get())
+                            novo_residuos = float(entrada_residuos.get())
+                            novo_energia = float(entrada_energia.get())
+                            novo_transporte = entrada_transporte.get()
 
-                        # Atualiza o registro no banco de dados
-                        cursor = bd.banco.cursor()
-                        cursor.execute("""
-                            UPDATE sustentabilidade
-                            SET s_agua = %s, s_reciclaveis = %s, s_energia = %s, s_transporte = %s
-                            WHERE s_id = %s
-                        """, (novo_agua, novo_residuos, novo_energia, novo_transporte, id_a_editar))
-                        bd.banco.commit()
+                            if float(novo_agua) <= 0 or float(novo_residuos) <= 0 or float(novo_energia) <= 0:
+                                tk.messagebox.showerror("Valor Inválido", "Por favor, coloque um valor positivo.")
+                            elif not novo_transporte:
+                                tk.messagebox.showerror("Valor Inválido", "Por favor, asdasdsadsaasdasdadsadsadsdasdasads.")
+                            else:
+                                # Atualiza o registro no banco de dados
+                                cursor = bd.banco.cursor()
+                                cursor.execute("""
+                                    UPDATE sustentabilidade
+                                    SET s_agua = %s, s_reciclaveis = %s, s_energia = %s, s_transporte = %s
+                                    WHERE s_id = %s
+                                """, (novo_agua, novo_residuos, novo_energia, novo_transporte, id_a_editar))
+                                bd.banco.commit()
 
-                        # Atualiza a tabela e fecha a janela
-                        tk.messagebox.showinfo("Sucesso", "Registro atualizado com sucesso!")
-                        carregar_dados()
-                        janela_editar.destroy()
+                                # Atualiza a tabela e fecha a janela
+                                tk.messagebox.showinfo("Sucesso", "Registro atualizado com sucesso!")
+                                carregar_dados()
+                                janela_editar.destroy()
                     except Exception as e:
-                        tk.messagebox.showerror("Erro", f"Erro ao salvar alterações: {e}")
+                            tk.messagebox.showerror("Erro", f"Erro ao salvar alterações: {e}")
 
                 # Botão para salvar as alterações
                 ctk.CTkButton(janela_editar, text="Salvar", command=salvar_alteracoes).pack(pady=20)
@@ -799,6 +737,79 @@ def mudar_aba(aba):
         
     #-----Aba Estatistica-----
     elif aba == "Estatistica":
+        
+
+
+#----Atribuir cores nas estatísticas-----
+        def criar_bloco_estatistica_agua(master, titulo, valor, mensagem, y_pos):
+            cor = "green" if valor >= 0 and valor <=100 else "yellow" if valor > 100 and valor <= 150 else "red"
+
+            texto = ctk.CTkLabel(master, 
+                                text=f"{titulo.upper()} -> {mensagem}", 
+                                text_color="black",
+                                font=("Arial", 12))
+            texto.place(x=95, y=y_pos)
+
+            entrada = ctk.CTkEntry(master, 
+                                corner_radius=50,
+                                border_color=cor,
+                                placeholder_text=f"{valor}",
+                                width=75)
+            entrada.configure(state="readonly")
+            entrada.place(x=15, y=y_pos) 
+            
+        def criar_bloco_estatistica_reciclaveis(master, titulo, valor, mensagem, y_pos):
+            cor = "green" if valor >= 0 and valor < 0.95 else "yellow" if valor >= 0.95 and valor <= 1.25 else "red"
+
+            texto = ctk.CTkLabel(master, 
+                                text=f"{titulo.upper()} -> {mensagem}", 
+                                text_color="black",
+                                font=("Arial", 12))
+            texto.place(x=95, y=y_pos)
+
+            entrada = ctk.CTkEntry(master, 
+                                corner_radius=50,
+                                border_color=cor,
+                                placeholder_text=f"{valor}",
+                                width=75)
+            entrada.configure(state="readonly")
+            entrada.place(x=15, y=y_pos) 
+
+        def criar_bloco_estatistica_energia(master, titulo, valor, mensagem, y_pos):
+            cor = "green" if valor >= 0 and valor <= 4.5 else "yellow" if valor > 4.5 and valor <= 6 else "red"
+
+            texto = ctk.CTkLabel(master, 
+                                text=f"{titulo.upper()} -> {mensagem}", 
+                                text_color="black",
+                                font=("Arial", 12))
+            texto.place(x=95, y=y_pos)
+
+            entrada = ctk.CTkEntry(master, 
+                                corner_radius=50,
+                                border_color=cor,
+                                placeholder_text=f"{valor}",
+                                width=75)
+            entrada.configure(state="readonly")
+            entrada.place(x=15, y=y_pos) 
+
+        def criar_bloco_estatistica_transporte(master, titulo, valor, mensagem, y_pos):
+            cor = "green" if valor >=0 and valor<=0.25 else "yellow" if valor >0.25 and valor <=0.75 else "red"
+
+            texto = ctk.CTkLabel(master, 
+                                text=f"{titulo.upper()} -> {mensagem}", 
+                                text_color="black",
+                                font=("Arial", 12))
+            texto.place(x=95, y=y_pos)
+
+            entrada = ctk.CTkEntry(master, 
+                                corner_radius=50,
+                                border_color=cor,
+                                placeholder_text=f"{valor}",
+                                width=75)
+            entrada.configure(state="readonly")
+            entrada.place(x=15, y=y_pos) 
+    
+        
         botao_adiconarRegistro.configure(fg_color="#686564")
         botao_registros.configure(fg_color="#686564")
         botao_acoes.configure(fg_color="#686564")
