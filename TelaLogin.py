@@ -1,6 +1,9 @@
 import customtkinter as ctk
 import SistemaComBD
 import bd
+import mysql.connector as conexao
+
+
 
 bd = bd.banco.cursor()
 
@@ -82,20 +85,27 @@ def exibir_cadastro():
     campo_senha = ctk.CTkEntry(frame_conteudo, placeholder_text="Senha", show="*", border_color="#5e5e5e", width=200)
     campo_senha.pack(pady=10)
 
+    
     def cadastrar():
         usuario = campo_usuario.get()
         senha = campo_senha.get()
-        #print("INSERT INTO usuarios (u_un, u_senha) VALUES (%s, %s)", (usuario, senha))
-        
-        if usuario and senha:
-            bd.execute("INSERT INTO usuarios (u_un, u_senha) VALUES (%s, %s)", (usuario, senha))
-            resultado_bd = bd.fetchall()
-            resultado.configure(text="Usuário cadastrado", text_color="#ffb74d")
-            #if resultado_bd:
-              #  resultado.configure(text="Usuário cadastrado", text_color="#ffb74d")
 
-        else:
+        if not usuario or not senha:
             resultado.configure(text="Preencha todos os campos.", text_color="#ffb74d")
+            return
+
+        try:
+            bd.execute("INSERT INTO usuarios (u_un, u_senha) VALUES (%s, %s)", (usuario, senha))
+            resultado.configure(text="Usuário cadastrado com sucesso!", text_color="#4caf50")
+        except conexao.IntegrityError as e:
+            if e.errno == 1062:
+               resultado.configure(text="Este nome de usuário já está cadastrado.", text_color="#ff9800")
+            else:
+                resultado.configure(text="Erro ao cadastrar usuário.", text_color="#e57373")
+        except Exception as e:
+          resultado.configure(text="Erro inesperado ao cadastrar.", text_color="#e57373")
+          print(f"Erro: {e}")  # para depuração
+
 
     ctk.CTkButton(frame_conteudo,
                   text="Cadastrar",
