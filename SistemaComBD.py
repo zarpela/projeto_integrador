@@ -37,88 +37,88 @@ frame2.place(x=400, y=0)  # Posiciona frame2 à direita, junto ao frame1
 def mudar_aba(aba):  # Função para alternar abas/visualizações
     global botao_OqueFazer  # Variável global, usada possivelmente em outro contexto
     for widget in frame1.winfo_children():  # Limpa widgets atuais no frame1
-        widget.destroy()
+        widget.destroy()  # Remove (destroi) o widget atual do frame1 para limpar a tela antes de exibir a nova aba
     
     #-----Aba Adicionar Registros-----
     if aba == "Adicionar Registros":  # If para verificar se aba é "Adicionar Registros"
 
-        botao_adiconarRegistro.configure(fg_color="#363434")  # Destaca botão ativo
-        botao_registros.configure(fg_color="#686564")  # Reset cor botões inativos
-        botao_acoes.configure(fg_color="#686564")
-        botao_graficos.configure(fg_color="#686564")
-        botao_estatistica.configure(fg_color="#686564")
+        botao_adiconarRegistro.configure(fg_color="#363434")  # Destaca o botão "Adicionar registros" como ativo (cor escura)
+        botao_registros.configure(fg_color="#686564")  # Define cor de botão inativo para "Consultar Registros"
+        botao_acoes.configure(fg_color="#686564")  # Define cor de botão inativo para "Editar Registros"
+        botao_graficos.configure(fg_color="#686564")  # Define cor de botão inativo para "Gráfico"
+        botao_estatistica.configure(fg_color="#686564")  # Define cor de botão inativo para "Estatística"
         
         texto_addRegistros = ctk.CTkLabel(frame1,  # Texto título da aba
-                     text="Adicionar Registros", 
-                     text_color="black",
-                     font=("Arial", 18))
+                     text="Adicionar Registros",  # Define o texto exibido no título da aba
+                     text_color="black",          # Define a cor do texto do título
+                     font=("Arial", 18))          # Define a fonte e o tamanho do texto do título
         texto_addRegistros.place(x=135, y=30)  # Posiciona título
         
         #-----Texto e entrada do campo agua-----
         texto_consumoAgua = ctk.CTkLabel(frame1,  # Label para o consumo de água
-                     text="Consumo de água (L):", 
-                     text_color="black",
-                     font=("Arial", 12))
-        texto_consumoAgua.place(x=110, y=75)
+                     text="Consumo de água (L):",  # Define o texto do label para o campo de água
+                     text_color="black",           # Define a cor do texto do label
+                     font=("Arial", 12))           # Define a fonte e o tamanho do texto do label
+        texto_consumoAgua.place(x=110, y=75)        # Posiciona o label na tela nas coordenadas x=110, y=75
         
         entrada_agua = ctk.CTkEntry(frame1,  # Campo de entrada para água
                                     corner_radius=50,  # Bordas arredondadas
                                     border_color="Grey",  # Cor da borda
                                     width=200)  # Largura campo entrada
-        entrada_agua.place(x=110, y=100)
+        entrada_agua.place(x=110, y=100)  # Posiciona o campo de entrada de água nas coordenadas x=110, y=100
         
         #-----Texto e entrada da geração de resíduos-----
         texto_geracaoResiduos = ctk.CTkLabel(frame1,  # Label não recicláveis
-                                            text="Não recicláveis (kg):",
-                                            text_color="black",
-                                            font=("Arial", 12))
-        texto_geracaoResiduos.place(x=110, y=135)
+                                            text="Não recicláveis (kg):",  # Define o texto do label para o campo de resíduos não recicláveis
+                                            text_color="black", # Define a cor do texto do label
+                                            font=("Arial", 12)) # Define a fonte e o tamanho do texto do label
+        texto_geracaoResiduos.place(x=110, y=135) # Posiciona o label na tela nas coordenadas x=110, y=135
         
         entrada_geracaoResiduos= ctk.CTkEntry(frame1,  # Entrada resíduos não recicláveis
-                                            corner_radius=50, 
-                                            border_color="Grey",
-                                            width=200)
-        entrada_geracaoResiduos.place(x=110, y=160)
+                                            corner_radius=50, # Define bordas arredondadas para o campo de entrada de resíduos
+                                            border_color="Grey", # Define a cor da borda do campo de entrada de resíduos
+                                            width=200) # Define a largura do campo de entrada de resíduos
+        entrada_geracaoResiduos.place(x=110, y=160) # Posiciona o campo de entrada de resíduos nas coordenadas x=110, y=160
         
         #-----Texto e entrada da energia gasta-----
         texto_energiaGasta = ctk.CTkLabel(frame1,  # Label energia elétrica consumida
-                                            text="Energia elétrica (KWh):", 
-                                            text_color="black",
-                                            font=("Arial", 12))
-        texto_energiaGasta.place(x=110, y=195)
+                                            text="Energia elétrica (KWh):", # Texto do label para o campo de energia elétrica
+                                            text_color="black", # Cor do texto do label
+                                            font=("Arial", 12)) # Fonte e tamanho do texto do label
+        texto_energiaGasta.place(x=110, y=195) # Posiciona o label na tela nas coordenadas x=110, y=195
         
         entrada_energiaGasta = ctk.CTkEntry(frame1,  # Campo para entrada da energia
-                                            corner_radius=50,
-                                            border_color="Grey",
-                                            width=200)
-        entrada_energiaGasta.place(x=110, y=220)
+                                            corner_radius=50,  # Bordas arredondadas do campo de entrada de energia
+                                            border_color="Grey",  # Cor da borda do campo de entrada de energia
+                                            width=200)  # Largura do campo de entrada de energia
+        entrada_energiaGasta.place(x=110, y=220)  # Posiciona o campo de entrada de energia nas coordenadas x=110, y=220
         
         #-----Texto e entrada do tipo de transporte-----
         texto_tipoTransporte = ctk.CTkLabel(frame1,  # Label para transporte utilizado
-                                            text="Tipo de transporte utilizado:",
-                                            text_color="black",
-                                            font=("Arial", 12))
-        texto_tipoTransporte.place(x=110, y=255)
+                                            text="Tipo de transporte utilizado:",  # Texto do label para o campo de transporte
+                                            text_color="black",  # Cor do texto do label
+                                            font=("Arial", 12))  # Fonte e tamanho do texto do label
+        texto_tipoTransporte.place(x=110, y=255) # Posiciona o label na tela nas coordenadas x=110, y=255
         
         transportes = ["Transporte Público", "Bicicleta", "Caminhada", "Carona", "Carro Particular", "Moto Particular"]  # Opções de transporte
         entrada_tipoTransporte = ctk.CTkComboBox(frame1,  # ComboBox para seleção transporte
-                                            values=transportes, 
-                                            corner_radius= 15,
-                                            justify="left",
-                                            border_color="Grey",
-                                            width=200,
-                                            state="readonly")  # Só permite seleção, não edição livre
-        entrada_tipoTransporte.place(x=110, y=280)
+                                            values=transportes, # Lista de opções de transporte disponíveis
+                                            corner_radius= 15,  # Bordas arredondadas do ComboBox
+                                            justify="left", # Alinhamento do texto à esquerda
+                                            border_color="Grey", # Cor da borda do ComboBox
+                                            width=200, # Largura do ComboBox
+                                            state="readonly") # ComboBox somente leitura (não permite digitação)
+        entrada_tipoTransporte.place(x=110, y=280)  # Posiciona o ComboBox na tela nas coordenadas x=110, y=280
         
         #-----Botão adicionar registros-----
         botao_addResgistros = ctk.CTkButton(frame1,  # Botão para enviar dados
-                                            text="Cadastrar", 
-                                            fg_color="#474444", 
-                                            corner_radius=50,
-                                            width= 145,
-                                            height= 35,
-                                            command=lambda: adicionar_dados())  # Chama função para adicionar dados
-        botao_addResgistros.place(x=135, y=330)
+                                            text="Cadastrar", # Texto exibido no botão de cadastro
+                                            fg_color="#474444", # Cor de fundo do botão
+                                            corner_radius=50, # Bordas arredondadas do botão
+                                            width= 145, # Largura do botão
+                                            height= 35, # Altura do botão
+                                            command=lambda: adicionar_dados()) # Função chamada ao clicar no botão
+        botao_addResgistros.place(x=135, y=330) # Posiciona o botão na tela nas coordenadas x=135, y=330
 
         # -----Função para adicionar os dados ao banco de dados-----
         def adicionar_dados():  # Função ao clicar em 'Cadastrar'
@@ -858,53 +858,53 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
         }
         
         if resultado and resultado[0]: #Confirma se tem dados na lista resultado
-            cursor.execute("SELECT s_transporte FROM sustentabilidade")
-            transportes = cursor.fetchall()
-            
-            soma_transporte = 0
-            quantidade_transportes = 0
+            cursor.execute("SELECT s_transporte FROM sustentabilidade")  # Busca todos os tipos de transporte registrados
+            transportes = cursor.fetchall()  # Recupera todos os registros de transporte
+           
+            soma_transporte = 0  # Inicializa a soma dos valores de transporte
+            quantidade_transportes = 0  # Inicializa o contador de transportes
 
-            for transporte in transportes:
-                tipo_transporte = transporte[0] 
-                if tipo_transporte in valor_transporte:
-                    soma_transporte += valor_transporte[tipo_transporte]  
-                    quantidade_transportes += 1  
+            for transporte in transportes:  # Itera sobre cada transporte registrado
+                tipo_transporte = transporte[0]  # Obtém o tipo de transporte
+                if tipo_transporte in valor_transporte:  # Verifica se o tipo está no dicionário de valores
+                    soma_transporte += valor_transporte[tipo_transporte]  # Soma o valor correspondente
+                    quantidade_transportes += 1  # Incrementa o contador
          
-            if quantidade_transportes > 0:
-                media_transporte = round(soma_transporte / quantidade_transportes, 2)
+            if quantidade_transportes > 0:  # Se houve registros de transporte
+                media_transporte = round(soma_transporte / quantidade_transportes, 2)  # Calcula a média dos valores de transporte
             else:
-                media_transporte = 0 
-            cursor.execute("SELECT s_agua, s_reciclaveis, s_energia FROM sustentabilidade")
-            dados = cursor.fetchall()
+                media_transporte = 0  # Se não houver registros, define média como zero
+            cursor.execute("SELECT s_agua, s_reciclaveis, s_energia FROM sustentabilidade")  # Busca dados de água, recicláveis e energia
+            dados = cursor.fetchall()  # Recupera todos os registros
 
-            agua_values = [d[0] for d in dados if d[0] is not None]
-            reciclaveis_values = [d[1] for d in dados if d[1] is not None]
-            energia_values = [d[2] for d in dados if d[2] is not None]
+            agua_values = [d[0] for d in dados if d[0] is not None]  # Lista de valores de água não nulos
+            reciclaveis_values = [d[1] for d in dados if d[1] is not None]  # Lista de valores de recicláveis não nulos
+            energia_values = [d[2] for d in dados if d[2] is not None]  # Lista de valores de energia não nulos
 
-            min_agua, max_agua = min(agua_values), max(agua_values)
-            min_reciclaveis, max_reciclaveis = min(reciclaveis_values), max(reciclaveis_values)
-            min_energia, max_energia = min(energia_values), max(energia_values)
+            min_agua, max_agua = min(agua_values), max(agua_values)  # Mínimo e máximo de água
+            min_reciclaveis, max_reciclaveis = min(reciclaveis_values), max(reciclaveis_values)  # Mínimo e máximo de recicláveis
+            min_energia, max_energia = min(energia_values), max(energia_values)  # Mínimo e máximo de energia
 
-            transporte_sustentavel = round((1 - media_transporte), 2)
-            cursor.execute("SELECT AVG(s_agua), AVG(s_reciclaveis), AVG(s_energia) FROM sustentabilidade")
-            resultado = cursor.fetchone()
+            transporte_sustentavel = round((1 - media_transporte), 2)  # Calcula índice de transporte sustentável
+            cursor.execute("SELECT AVG(s_agua), AVG(s_reciclaveis), AVG(s_energia) FROM sustentabilidade")  # Busca médias dos dados
+            resultado = cursor.fetchone()  # Recupera as médias
 
-            if resultado and all(v is not None for v in resultado):
-                s_agua, s_reciclaveis, s_energia = [round(v, 2) for v in resultado]
-                s_agua_normalizado = (s_agua - min_agua) / (max_agua - min_agua) if max_agua > min_agua else 0
-                s_reciclaveis_normalizado = (s_reciclaveis - min_reciclaveis) / (max_reciclaveis - min_reciclaveis) if max_reciclaveis > min_reciclaveis else 0
-                s_energia_normalizado = (s_energia - min_energia) / (max_energia - min_energia) if max_energia > min_energia else 0
+            if resultado and all(v is not None for v in resultado):  # Verifica se todas as médias são válidas
+                s_agua, s_reciclaveis, s_energia = [round(v, 2) for v in resultado]  # Arredonda médias
+                s_agua_normalizado = (s_agua - min_agua) / (max_agua - min_agua) if max_agua > min_agua else 0  # Normaliza água
+                s_reciclaveis_normalizado = (s_reciclaveis - min_reciclaveis) / (max_reciclaveis - min_reciclaveis) if max_reciclaveis > min_reciclaveis else 0  # Normaliza recicláveis
+                s_energia_normalizado = (s_energia - min_energia) / (max_energia - min_energia) if max_energia > min_energia else 0  # Normaliza energia
 
-                transporte_sustentavel = round((1 - media_transporte), 2)
+                transporte_sustentavel = round((1 - media_transporte), 2)  # Recalcula índice de transporte sustentável
 
                 pontuacao = float(round(
                     ((s_agua_normalizado * 0.2) +
                     (s_reciclaveis_normalizado * 0.3) +
                     (s_energia_normalizado * 0.3) +
                     (transporte_sustentavel * 0.2)),2
-                ))
+                ))  # Calcula pontuação final ponderada
 
-                if pontuacao >=0 and pontuacao <0.2:
+                if pontuacao >=0 and pontuacao <0.2:  # Define estrelas conforme a pontuação
                     estrelas = 5
                 elif pontuacao >=0.2 and pontuacao <0.4:
                     estrelas = 4
@@ -916,6 +916,7 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
                     estrelas = 1
                 
                  # ---------------- ÁGUA ----------------
+                 #Apenas exibe mensagens para cada nível de sustentabilidade de Água
                 if s_agua >= 0 and s_agua <= 100:
                     mensagemA = "Sustentável, Parábens"
                     mensagemPopUpA = "Você está sustentável no consumo de água!"
@@ -927,6 +928,7 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
                     mensagemPopUpA = "O consumo irresponsável hoje gera escassez amanhã. Crie planilhas para gerenciar formas de sustentabilizar seu consumo de água!"
 
                 # ---------------- RECICLÁVEIS ----------------
+                #Apenas exibe mensagens para cada nível de sustentabilidade de Recicláveis
                 if s_reciclaveis >= 0 and s_reciclaveis < 0.95:
                     mensagemR = "Sustentável, Parábens"
                     mensagemPopUpR = "Você está sustentável com poucos itens não recicláveis! Continue assim!"
@@ -938,6 +940,7 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
                     mensagemPopUpR = "Produção elevada de resíduos não recicláveis! Reavalie seus hábitos e prefira materiais recicláveis."
 
                 # ---------------- ENERGIA ----------------
+                #Apenas exibe mensagens para cada nível de sustentabilidade de Energia
                 if s_energia >= 0 and s_energia <= 4.5:
                     mensagemE = "Sustentável, Parábens"
                     mensagemPopUpE = "Seu consumo de energia está em um ótimo nível! Continue adotando práticas conscientes!"
@@ -949,6 +952,7 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
                     mensagemPopUpE = "Alto consumo de energia detectado! Tente adotar lâmpadas LED e reduzir o uso de eletrônicos desnecessários."
 
                 # ---------------- TRANSPORTE ----------------
+                #Apenas exibe mensagens para cada nível de sustentabilidade de Transporte
                 if transporte_sustentavel >= 0 and transporte_sustentavel <=0.25:
                     mensagemT = "Sustentável, Parábens"
                     mensagemPopUpT = "Você utiliza transportes sustentáveis com frequência! Ótimo para o meio ambiente e para você!"
@@ -959,23 +963,23 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
                     mensagemT = "Insustentável"
                     mensagemPopUpT = "Uso elevado de transportes poluentes! Reduza a dependência de carros particulares e adote alternativas mais verdes."
                     
-                dados = {
-                    "agua": {"valor": s_agua, "mensagem": mensagemA},
-                    "nao_reciclaveis": {"valor": s_reciclaveis, "mensagem": mensagemR},
-                    "energia": {"valor": s_energia, "mensagem": mensagemE},
-                    "transporte": {"valor": transporte_sustentavel, "mensagem": mensagemT},
-                    "pontuacao": estrelas
+                dados = {  # Dicionário com os dados finais para exibição nas estatísticas
+                    "agua": {"valor": s_agua, "mensagem": mensagemA},  # Dados de água: valor médio e mensagem
+                    "nao_reciclaveis": {"valor": s_reciclaveis, "mensagem": mensagemR},  # Dados de resíduos não recicláveis
+                    "energia": {"valor": s_energia, "mensagem": mensagemE},  # Dados de energia elétrica
+                    "transporte": {"valor": transporte_sustentavel, "mensagem": mensagemT},  # Dados de transporte sustentável
+                    "pontuacao": estrelas  # Quantidade de estrelas (pontuação final)
                 }
 
-                criar_bloco_estatistica_agua(frame1, "ÁGUA", dados["agua"]["valor"], dados["agua"]["mensagem"], 80)
-                criar_bloco_estatistica_reciclaveis(frame1, "NÃO RECICLÁVEIS", dados["nao_reciclaveis"]["valor"], dados["nao_reciclaveis"]["mensagem"], 120)
-                criar_bloco_estatistica_energia(frame1, "ENERGIA ELÉTRICA", dados["energia"]["valor"], dados["energia"]["mensagem"], 160)
-                criar_bloco_estatistica_transporte(frame1, "TRANSPORTE", dados["transporte"]["valor"], dados["transporte"]["mensagem"], 200)
+                criar_bloco_estatistica_agua(frame1, "ÁGUA", dados["agua"]["valor"], dados["agua"]["mensagem"], 80)  # Exibe bloco de estatística para água
+                criar_bloco_estatistica_reciclaveis(frame1, "NÃO RECICLÁVEIS", dados["nao_reciclaveis"]["valor"], dados["nao_reciclaveis"]["mensagem"], 120)  # Exibe bloco de estatística para resíduos não recicláveis
+                criar_bloco_estatistica_energia(frame1, "ENERGIA ELÉTRICA", dados["energia"]["valor"], dados["energia"]["mensagem"], 160)  # Exibe bloco de estatística para energia elétrica
+                criar_bloco_estatistica_transporte(frame1, "TRANSPORTE", dados["transporte"]["valor"], dados["transporte"]["mensagem"], 200)  # Exibe bloco de estatística para transporte
 
                 texto_estatisticasPontuacao = ctk.CTkLabel(
                     frame1, text="ESTRELAS", text_color="black", font=("Arial", 12)
-                )
-                texto_estatisticasPontuacao.place(x=180, y=260)
+                )  # Cria rótulo para exibir "ESTRELAS"
+                texto_estatisticasPontuacao.place(x=180, y=260)  # Posiciona o rótulo "ESTRELAS" na tela
 
                 puxar_estatisticasPontuacao = ctk.CTkEntry(
                     frame1,
@@ -983,116 +987,116 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
                     border_color="gold",
                     placeholder_text=str(dados["pontuacao"]),
                     width=70
-                )
-                puxar_estatisticasPontuacao.configure(state="readonly")
-                puxar_estatisticasPontuacao.place(x=100, y=260)
-                
+                )  # Cria campo de entrada somente leitura para exibir a pontuação (estrelas)
+                puxar_estatisticasPontuacao.configure(state="readonly")  # Define o campo como somente leitura
+                puxar_estatisticasPontuacao.place(x=100, y=260)  # Posiciona o campo de pontuação na tela
+
                 botao_OqueFazer = ctk.CTkButton(frame1,
-                                    text="Como Melhorar?",
-                                    text_color="white",
-                                    fg_color="#686564",
-                                    corner_radius=50,
-                                    bg_color="#FFFFFF",
-                                    hover_color="#363434",
-                                    width= 145,
-                                    height= 35,
-                                    command=lambda: OqueFazer(mensagemPopUpA, mensagemPopUpR, mensagemPopUpE, mensagemPopUpT))
-                botao_OqueFazer.place(x=115, y=315)
+                                    text="Como Melhorar?",  # Texto exibido no botão "Como Melhorar?"
+                                    text_color="white",  # Cor do texto do botão
+                                    fg_color="#686564",  # Cor de fundo do botão
+                                    corner_radius=50,  # Bordas arredondadas do botão
+                                    bg_color="#FFFFFF",  # Cor de fundo do botão (background)
+                                    hover_color="#363434",  # Cor do botão ao passar o mouse
+                                    width= 145,  # Largura do botão
+                                    height= 35,  # Altura do botão
+                                    command=lambda: OqueFazer(mensagemPopUpA, mensagemPopUpR, mensagemPopUpE, mensagemPopUpT))  # Botão para exibir dicas de melhoria
+                botao_OqueFazer.place(x=115, y=315)  # Posiciona o botão "Como Melhorar?" na tela
                                 
             else:
                 tk.messagebox.showinfo("Estatísticas", "Não foi possível calcular as médias.")
         else:
             tk.messagebox.showinfo("Estatísticas", "Nenhum dado encontrado no banco de dados.")
 
-def OqueFazer(mensagemPopUpA, mensagemPopUpR, mensagemPopUpE, mensagemPopUpT):
-    janela_OqueFazer = ctk.CTkToplevel()
-    janela_OqueFazer.title("Melhorar minha Sustentabilidade")
-    janela_OqueFazer.geometry("450x450") 
+def OqueFazer(mensagemPopUpA, mensagemPopUpR, mensagemPopUpE, mensagemPopUpT):  # Função para exibir dicas de melhoria em uma nova janela
+    janela_OqueFazer = ctk.CTkToplevel()  # Cria uma nova janela (popup)
+    janela_OqueFazer.title("Melhorar minha Sustentabilidade")  # Define o título da janela
+    janela_OqueFazer.geometry("450x450")  # Define o tamanho da janela
 
-    janela_OqueFazer.grab_set()
-    janela_OqueFazer.configure(bg_color="#2E2E2E")  
+    janela_OqueFazer.grab_set()  # Impede interação com a janela principal enquanto o popup está aberto
+    janela_OqueFazer.configure(bg_color="#2E2E2E")  # Define a cor de fundo da janela
 
-    ctk.CTkLabel(janela_OqueFazer, text="Água:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))
-    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpA, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)
+    ctk.CTkLabel(janela_OqueFazer, text="Água:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))  # Título para dicas de água
+    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpA, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)  # Mensagem de dica para água
 
-    ctk.CTkLabel(janela_OqueFazer, text="Não Recicláveis:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))
-    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpR, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)
+    ctk.CTkLabel(janela_OqueFazer, text="Não Recicláveis:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))  # Título para dicas de resíduos
+    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpR, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)  # Mensagem de dica para resíduos
 
-    ctk.CTkLabel(janela_OqueFazer, text="Energia Elétrica:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))
-    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpE, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)
+    ctk.CTkLabel(janela_OqueFazer, text="Energia Elétrica:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))  # Título para dicas de energia
+    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpE, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)  # Mensagem de dica para energia
 
-    ctk.CTkLabel(janela_OqueFazer, text="Transporte:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))
-    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpT, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)
+    ctk.CTkLabel(janela_OqueFazer, text="Transporte:", text_color="white", font=("Arial", 16, "bold")).pack(pady=(10, 0))  # Título para dicas de transporte
+    ctk.CTkLabel(janela_OqueFazer, text=mensagemPopUpT, text_color="white", font=("Arial", 14), wraplength=400).pack(pady=5)  # Mensagem de dica para transporte
 
 
-botao_adiconarRegistro = ctk.CTkButton(janela_principal,
-                                text="Adicionar registros",
-                                text_color="white",
-                                fg_color="#686564",
-                                corner_radius=50,
-                                bg_color="#cccccc",
-                                hover_color="#363434",
-                                width= 145,
-                                height= 35,
-                                command=lambda: mudar_aba("Adicionar Registros"))
-botao_adiconarRegistro.place(x=460, y=60)
+botao_adiconarRegistro = ctk.CTkButton(janela_principal,  # Botão para abrir aba de adicionar registros
+                                text="Adicionar registros",  # Texto do botão
+                                text_color="white",  # Cor do texto do botão
+                                fg_color="#686564",  # Cor de fundo do botão
+                                corner_radius=50,  # Bordas arredondadas do botão
+                                bg_color="#cccccc",  # Cor de fundo do botão (background)
+                                hover_color="#363434",  # Cor do botão ao passar o mouse
+                                width= 145,  # Largura do botão
+                                height= 35,  # Altura do botão
+                                command=lambda: mudar_aba("Adicionar Registros"))  # Função chamada ao clicar no botão
+botao_adiconarRegistro.place(x=460, y=60)  # Posiciona o botão na tela
+
+botao_registros = ctk.CTkButton(janela_principal,  # Botão para abrir aba de consultar registros
+                                text="Consultar Registros",  # Texto do botão
+                                text_color="white",  # Cor do texto do botão
+                                fg_color="#686564",  # Cor de fundo do botão
+                                corner_radius=50,  # Bordas arredondadas do botão
+                                bg_color="#cccccc",  # Cor de fundo do botão (background)
+                                hover_color="#363434",  # Cor do botão ao passar o mouse
+                                width= 145,  # Largura do botão
+                                height= 35,  # Altura do botão
+                                command=lambda: mudar_aba("Consultar"))  # Função chamada ao clicar no botão
+botao_registros.place(x=460, y=120)  # Posiciona o botão na tela
     
-botao_registros = ctk.CTkButton(janela_principal,
-                                text="Consultar Registros",
-                                text_color="white",
-                                fg_color="#686564",
-                                corner_radius=50,
-                                bg_color="#cccccc",
-                                hover_color="#363434",
-                                width= 145,
-                                height= 35,
-                                command=lambda: mudar_aba("Consultar"))
-botao_registros.place(x=460, y=120)
+botao_acoes = ctk.CTkButton(janela_principal,  # Botão para abrir aba de editar registros
+                                text="Editar Registros",  # Texto do botão
+                                text_color="white",  # Cor do texto do botão
+                                fg_color="#686564",  # Cor de fundo do botão
+                                corner_radius=50,  # Bordas arredondadas do botão
+                                bg_color="#cccccc",  # Cor de fundo do botão (background)
+                                hover_color="#363434",  # Cor do botão ao passar o mouse
+                                width= 145,  # Largura do botão
+                                height= 35,  # Altura do botão
+                                command=lambda: mudar_aba("Editar Registros"))  # Função chamada ao clicar no botão
+botao_acoes.place(x=460, y=180)  # Posiciona o botão na tela
     
-botao_acoes = ctk.CTkButton(janela_principal,
-                                text="Editar Registros",
-                                text_color="white",
-                                fg_color="#686564",
-                                corner_radius=50,
-                                bg_color="#cccccc",
-                                hover_color="#363434",
-                                width= 145,
-                                height= 35,
-                                command=lambda: mudar_aba("Editar Registros"))
-botao_acoes.place(x=460, y=180)
+botao_graficos = ctk.CTkButton(janela_principal,  # Botão para abrir aba de gráficos
+                                text="Gráfico",  # Texto do botão
+                                text_color="white",  # Cor do texto do botão
+                                fg_color="#686564",  # Cor de fundo do botão
+                                corner_radius=50,  # Bordas arredondadas do botão
+                                bg_color="#cccccc",  # Cor de fundo do botão (background)
+                                hover_color="#363434",  # Cor do botão ao passar o mouse
+                                width= 145,  # Largura do botão
+                                height= 35,  # Altura do botão
+                                command=lambda: mudar_aba("Grafico"))  # Função chamada ao clicar no botão
+botao_graficos.place(x=460, y=240)  # Posiciona o botão na tela
     
-botao_graficos = ctk.CTkButton(janela_principal,
-                                text="Gráfico",
-                                text_color="white",
-                                fg_color="#686564",
-                                corner_radius=50,
-                                bg_color="#cccccc",
-                                hover_color="#363434",
-                                width= 145,
-                                height= 35,
-                                command=lambda: mudar_aba("Grafico"))
-botao_graficos.place(x=460, y=240)
-    
-botao_estatistica = ctk.CTkButton(janela_principal,
-                                text="Estatística",
-                                text_color="white",
-                                fg_color="#686564",
-                                corner_radius=50,
-                                bg_color="#cccccc",
-                                hover_color="#363434",
-                                width= 145,
-                                height= 35,
-                                command=lambda: mudar_aba("Estatistica"))
-botao_estatistica.place(x=460, y=300)
+botao_estatistica = ctk.CTkButton(janela_principal,  # Botão para abrir aba de estatísticas
+                                text="Estatística",  # Texto do botão
+                                text_color="white",  # Cor do texto do botão
+                                fg_color="#686564",  # Cor de fundo do botão
+                                corner_radius=50,  # Bordas arredondadas do botão
+                                bg_color="#cccccc",  # Cor de fundo do botão (background)
+                                hover_color="#363434",  # Cor do botão ao passar o mouse
+                                width= 145,  # Largura do botão
+                                height= 35,  # Altura do botão
+                                command=lambda: mudar_aba("Estatistica"))  # Função chamada ao clicar no botão
+botao_estatistica.place(x=460, y=300)  # Posiciona o botão na tela
 
 # --- Rodapé ---
-rodape = ctk.CTkLabel(janela_principal,
-                      text="Sistema de Sustentabilidade 2025 ",
-                      font=ctk.CTkFont(size=11, slant="italic"),
-                      text_color="black",
-                      bg_color="#cccccc")
-rodape.place(x=445, y=360)
+rodape = ctk.CTkLabel(janela_principal,  # Cria o rodapé da janela principal
+                      text="Sistema de Sustentabilidade 2025 ",  # Texto exibido no rodapé
+                      font=ctk.CTkFont(size=11, slant="italic"),  # Fonte e estilo do texto do rodapé
+                      text_color="black",  # Cor do texto do rodapé
+                      bg_color="#cccccc")  # Cor de fundo do rodapé
+rodape.place(x=445, y=360)  # Posiciona o rodapé na janela
 
-def chamar_janela():
-    mudar_aba("Adicionar Registros")
-    janela_principal.mainloop()
+def chamar_janela():  # Função para iniciar a janela principal do sistema
+    mudar_aba("Adicionar Registros")  # Abre a aba "Adicionar Registros" ao iniciar
+    janela_principal.mainloop()  # Inicia o loop principal da interface gráfica
