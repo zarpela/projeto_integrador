@@ -1,6 +1,6 @@
 # Projeto Integrador do grupo 8
 
-### Projeto orientado por André Mendeleck
+### Projeto orientado pelo professor André Mendeleck
   ><img width="1250" alt="image" src="https://github.com/user-attachments/assets/899507f4-5133-4701-811f-bdc7f7433b59" />
  <ul>
     <li>Marcelo Zarpelon - BD e backend, parte da documentação, parte do design no Canva e o trello</li>
