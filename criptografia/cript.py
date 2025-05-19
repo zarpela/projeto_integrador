@@ -10,14 +10,14 @@ mod = 256 #modulo
 def str2ASCIItable(msg: str): #converter string em numero
     result = [ord(c) for c in msg] #para cada c em mensagem transforma c em ascii
     if len(result) % 2 != 0:
-        result.append(ord(' '))  # padding
+        result.append(ord(' '))  # Se o tamanho for ímpar, adiciona espaço (padding)
     return result
 
 def ASCIItable2str(asciiINPUT: list): # inversa da de cima
-    texto = [chr(c) for c in asciiINPUT]
+    texto = [chr(c) for c in asciiINPUT] # Converte valores ASCII de volta para caracteres
     result = ""
     for i in texto:
-        if i == " ":
+        if i == " ":  # Remove os espaços de padding
             continue
         result += i
     return result
@@ -31,13 +31,16 @@ def encrypt(asciiINPUT: list):
     for i in range(1, length, 2):  # ímpares
         alternada.append(asciiINPUT[i])
 
+    # Reorganiza os valores
     half = length // 2 #divisao sem resto
     firstHalf = alternada[:half] # fatiamento
     secondHalf = alternada[half:]
 
-    A = Matrix((firstHalf, secondHalf))
-    B = (K * A) % mod
+    # Divide a Lista em duas metades
+    A = Matrix((firstHalf, secondHalf))    # Cria uma matriz 2xN com as duas metades
+    B = (K * A) % mod                      # Multiplica pela matriz codificadora e aplica módulo 256
 
+    #Converte a matriz B (criptografada) de volta para uma lista linear de números.
     ascii_encrypted = []
     rows, cols = B.shape
     for col in range(cols):
@@ -50,27 +53,30 @@ def encrypt(asciiINPUT: list):
     return encrypted_b64
 
 def decrypt(b64_input: str):
-    encrypted_text = base64.b64decode(b64_input)
-    asciiINPUT = list(encrypted_text)
-    length = len(asciiINPUT)
+    # Recebe a string criptografada em base64.
+    encrypted_text = base64.b64decode(b64_input)  # Decodifica de base64 para bytes
+    asciiINPUT = list(encrypted_text)  # Transforma os bytes em lista de inteiros
 
+    # Divide os valores em duas metades para reconstruir a matriz original embaralhada.
     firstHalf = []
     secondHalf = []
     for i in range(0, length, 2):
         firstHalf.append(asciiINPUT[i])
     for i in range(1, length, 2):
         secondHalf.append(asciiINPUT[i])
+    
+    B = Matrix((firstHalf, secondHalf))  # Cria matriz 2xN com os dados embaralhados
+    A = (K_inv * B) % mod  # Multiplica pela inversa da matriz codificadora
 
-    B = Matrix((firstHalf, secondHalf))
-    A = (K_inv * B) % mod
-
+    # Transforma novamente em ASCII
     ascii_list = []
     rows, cols = A.shape
     for col in range(cols):
         for row in range(rows):
             ascii_list.append(int(A[row, col]))
+
+    # Converte SCII em texto
     texto = ASCIItable2str(ascii_list)
-    
     return texto
 
 
