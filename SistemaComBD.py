@@ -554,7 +554,7 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
 
         # Criação e posicionamento do título para as ações na interface
         texto_acoes = ctk.CTkLabel(frame1,
-                                text="Ações do Sistema",
+                                text="Editar Registros",
                                 text_color="black",
                                 font=("Arial", 18))
         texto_acoes.place(x=135, y=30)
@@ -841,7 +841,7 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
         # Exibe um rótulo indicando estatísticas médias do usuário
         texto_estatisticas = ctk.CTkLabel(
             frame1,
-            text="Estatísticas média do Usuário",
+            text="Estatísticas do Usuário",
             text_color="black",
             font=("Arial", 18)
         )
