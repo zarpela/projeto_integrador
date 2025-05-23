@@ -5,7 +5,6 @@ K = Matrix([[3, 2], [1, 5]]) #codificadora
 K_inv = Matrix([[217, 118], [59, 79]]) #inversa
 mod = 256 #modulo
 
-#print((K*K_inv)%256)
 
 def str2ASCIItable(msg: str): #converter string em numero
     result = [ord(c) for c in msg] #para cada c em mensagem transforma c em ascii
@@ -23,6 +22,7 @@ def ASCIItable2str(asciiINPUT: list): # inversa da de cima
     return result
 
 def encrypt(asciiINPUT: list):
+    
     length = len(asciiINPUT)
     # Embaralha: primeiros os pares, depois os ímpares
     alternada = []
@@ -49,12 +49,14 @@ def encrypt(asciiINPUT: list):
  
     # Agora converte para bytes e depois para base64
     encrypted_bytes = bytes(ascii_encrypted)
+    #print(ascii_encrypted) # printa os números encriptados pela matriz antes de passar por base 64
     encrypted_b64 = base64.b64encode(encrypted_bytes).decode('ascii')
     return encrypted_b64
 
 def decrypt(b64_input: str):
     # Recebe a string criptografada em base64.
     encrypted_text = base64.b64decode(b64_input)  # Decodifica de base64 para bytes
+    length = len(encrypted_text)  # Tamanho do texto criptografado
     asciiINPUT = list(encrypted_text)  # Transforma os bytes em lista de inteiros
 
     # Divide os valores em duas metades para reconstruir a matriz original embaralhada.
@@ -90,5 +92,5 @@ if __name__ == "__main__":
 
     print("Mensagem original:", msg)
     print("Criptografado:", enc)
-    print("Descriptografado:", dec)
-
+    print("Descriptografado:", dec)   
+    print((K*K_inv)%256) # outputa [[1, 0], [0, 1]] ( (K VEZES K^-1) em modulo 256 )
