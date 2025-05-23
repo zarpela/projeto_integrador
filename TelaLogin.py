@@ -2,6 +2,7 @@ import customtkinter as ctk
 import SistemaComBD
 import bd
 import mysql.connector as conexao
+from criptografia import cript
 
 
 
@@ -53,6 +54,9 @@ def exibir_login():
     def login():
         usuario = campo_usuario.get()
         senha = campo_senha.get()
+
+        #senha = cript.str2ASCIItable(cript.encrypt(senha))
+        senha = cript.encrypt(cript.str2ASCIItable(senha)) # criptografa a senha pra ver se ta igual a do bd( la ja ta criptografado ) 
         bd.execute(f"SELECT * FROM usuarios WHERE u_un = %s AND u_senha = %s", (usuario, senha))
         resultado_bd = bd.fetchall()
         if resultado_bd:
@@ -89,7 +93,8 @@ def exibir_cadastro():
     def cadastrar():
         usuario = campo_usuario.get()
         senha = campo_senha.get()
-
+        senha = cript.encrypt(cript.str2ASCIItable(senha))# criptografa a senha
+        #print("cadastrar", senha)
         if not usuario or not senha:
             resultado.configure(text="Preencha todos os campos.", text_color="#ffb74d")
             return
