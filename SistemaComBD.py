@@ -297,9 +297,9 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
                                     height=250)  # Altura do frame
         tabela_frame.place(x=5, y=160)  # Posiciona o frame na janela (X=5, Y=160)
 
-        #-----Botão limpar tabela-----
+        #-----Botão Consulta-----
         botao_limpar = ctk.CTkButton(frame1,  # Botão para recarregar/limpar dados da tabela
-                                    text="Limpar Tabela",  # Texto exibido no botão
+                                    text="Limpar Consulta",  # Texto exibido no botão
                                     text_color="white",  # Cor do texto do botão
                                     fg_color="#474444",  # Cor de fundo do botão
                                     corner_radius=50,  # Bordas arredondadas
