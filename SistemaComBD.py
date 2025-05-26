@@ -375,7 +375,7 @@ def mudar_aba(aba):  # Função para alternar abas/visualizações
 
                 # Campo para editar Consumo de Água
                 texto_editarRegistros = ctk.CTkLabel(janela_editar,
-                            text="Adicionar Registros", 
+                            text="Editar Registros", 
                             text_color="white",
                             font=("Arial", 18)).pack(pady=3)
 
