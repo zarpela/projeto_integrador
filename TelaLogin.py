@@ -93,12 +93,14 @@ def exibir_cadastro():
     def cadastrar():
         usuario = campo_usuario.get()
         senha = campo_senha.get()
-        senha = cript.encrypt(cript.str2ASCIItable(senha))# criptografa a senha
         #print("cadastrar", senha)
         if not usuario or not senha:
             resultado.configure(text="Preencha todos os campos.", text_color="#ffb74d")
             return
-
+        if (" " in usuario) or (" " in senha):
+            resultado.configure(text="Dados inválidos (não use espaços em branco).", text_color="#ffb74d")
+            return
+        senha = cript.encrypt(cript.str2ASCIItable(senha))# criptografa a senha
         try:
             bd.execute("INSERT INTO usuarios (u_un, u_senha) VALUES (%s, %s)", (usuario, senha))
             resultado.configure(text="Usuário cadastrado com sucesso!", text_color="#4caf50")
