@@ -13,11 +13,7 @@ CREATE TABLE IF NOT EXISTS sustentabilidade (
     s_agua FLOAT NOT NULL,                     -- Quantidade de água consumida (não pode ser nula)
     s_reciclaveis FLOAT NOT NULL,              -- Quantidade de não-recicláveis descartados (não pode ser nula)
     s_energia FLOAT NOT NULL,                  -- Consumo de energia (não pode ser nulo)
-    s_transporte VARCHAR(30) NOT NULL,         -- Meio de transporte utilizado (não pode ser nulo)
-    CONSTRAINT fk_sustentabilidade_usuario     -- Define uma restrição de chave estrangeira
-        FOREIGN KEY (su_id)                    -- Relaciona 'su_id' da tabela sustentabilidade com 'u_id' da tabela usuarios
-        REFERENCES usuarios (u_id) 
-        ON DELETE CASCADE                      -- Se um usuário for deletado, os registros de sustentabilidade dele também serão deletados
+    s_transporte VARCHAR(30) NOT NULL        -- Meio de transporte utilizado (não pode ser nulo)
 );
 
 -- Insere um usuário padrão com nome de usuário 'admin' e senha 'admin'
@@ -31,7 +27,7 @@ CREATE TABLE IF NOT EXISTS sustentabilidade (
 # SELECT * FROM sustentabilidade;
 
 -- Seleciona todos os registros da tabela 'usuarios' (comentado)
-#SELECT * FROM usuarios;
+SELECT * FROM usuarios;
 
 -- Deleta o usuário com ID 1 da tabela 'usuarios' (comentado para evitar exclusão acidental)
 # DELETE FROM usuarios WHERE u_id = 1;
